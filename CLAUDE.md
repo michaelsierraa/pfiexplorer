@@ -26,6 +26,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 1. Implement Option D: load a US land/coastline GeoJSON (e.g., from Natural Earth or us-atlas), add point-in-polygon check to jitter via rejection sampling — reject offsets that land in water, fall back to raw coordinate after N attempts
 2. Decide on GeoJSON source: Natural Earth 10m land (`ne_10m_land.json`, ~800 KB) or us-atlas state polygons (`states-10m.json`, ~500 KB) — state polygons are preferable since they also enforce state-boundary containment
 3. After Option D: address the jitter-scale issue separately (sub-pixel at national zoom) — possible fix: enforce a minimum pixel displacement by converting `jAmt` from degrees to pixels using the current map zoom level
+4. **Data enrichment — reduce centroid-defaulted points** (see backlog below)
+
+## Backlog
+
+### Geocoding enrichment — reduce centroid-placeholder points
+
+Many incidents likely have state centroid coordinates as placeholders rather than true incident locations (GVA sometimes records only state-level geography). These inflate apparent centroid clusters and make jitter misleading.
+
+**Step 1 — Audit:** Write a script that compares each row's `latitude`/`longitude` to `statecentroids.csv` values. Any exact or near-exact match (within ~0.001°) is a suspected centroid placeholder. Output a list of affected `incidentid`s and a count per state.
+
+**Step 2 — Source of truth:** The CSV has no city/address field. Re-geocoding options:
+- **GVA website**: Each `incidentid` corresponds to a GVA record at `gunviolencearchive.org`. GVA records often include city and address. A scraping script (rate-limited, respectful) could retrieve city data for centroid-placeholder incidents.
+- **Source URLs**: The `sources` column contains news article URLs. NLP/regex on article text could extract city names, but is noisy.
+- **Manual review**: For a small number of high-value incidents (e.g., those in coastal states where centroids land in water), manual correction may be practical.
+
+**Step 3 — Geocode:** Use Nominatim (OpenStreetMap, free, no API key) or Census Geocoder to convert city+state → lat/lon for the affected incidents. Store results in a supplemental file (e.g., `pfie-web/data/geocode_corrections.csv` with columns `incidentid,latitude,longitude`) and apply as an override in `loadData()`.
+
+**Constraint:** The CSV is the authoritative data file; corrections should be applied as a separate overlay, not by modifying the original CSV, so the provenance is clear.
 
 ---
 
