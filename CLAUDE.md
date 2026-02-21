@@ -4,28 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-21 17:17 CST
+**Session:** 2026-02-21 17:45 CST
 
-**In progress:** 2×2 grid layout implemented and Playwright QA tooling installed — needs browser testing to verify visual correctness across viewports.
+**In progress:** Jitter investigation complete (analysis only, no code changes). Next major task is Option D — point-in-polygon land/coastline jitter bounds.
 
 **Completed this session:**
-- `index.html` lines 135–200: Map tab restructured to `.map-grid` with 4 `.map-cell` quadrants: controls (top-left), `#pfiemap` (top-right), `#trendsMain` (bottom-left), `#barChart` (bottom-right)
-- `style.css` ~279: Replaced `.map-wrapper`/`.map-below`/`.controls-col`/`.chart-col` rules with `.map-grid` (`display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr`) and `.map-cell` styles
-- `style.css` ~568 mobile block: Grid collapses to 1-column with order: map(1) → controls(2) → bar(3) → trend(4); min-heights 280px/250px
-- `app.js` `updateTrendsChart()` ~line 455: Added `trendsMainTitle` sync and `Plotly.react('trendsMain', ...)` render after the existing `trendsChart` render
-- `app.js`: Added `Plotly.Plots.resize(trendsMain)` to loadData setTimeout (~line 745), window.resize handler (~line 880), and map tab switch handler (~line 860)
-- Playwright installed: `pfie-web/package.json`, `pfie-web/playwright.config.js`, `pfie-web/tests/responsive.spec.js` created; chromium browser downloaded
+- 2×2 grid layout fully implemented and Playwright-verified: 19/19 tests pass across 375px, 720px, 1024px, 1440px viewports
+- Deep investigation of jitter "static point" bug for incident 437529 (Florida Keys):
+  - Confirmed jitter IS applied mathematically (coordinates change at every slider value)
+  - Root cause 1: incident 437529's raw coordinates (24.5611, -81.7733) are in Florida Keys water — a data/geocoding issue, not a jitter artifact
+  - Root cause 2: jitter base = 0.0153° (medianPosDiff of national data); at national zoom (~11 px/°) max slider (10) = 0.17px — sub-pixel, invisible for isolated points
+  - Stacked centroid-fallback points appear to "respond" because their cluster visibly spreads; isolated unique-coordinate points don't visibly move
+  - Playwright investigation script at `/tmp/investigate_jitter.mjs` documents the analysis
 
 **Suspected areas to investigate (start here next session):**
-- `style.css` `.map-grid` — verify `grid-template-rows: 1fr 1fr` actually divides the panel height equally; the parent `.tab-panel` must have `display: flex; flex-direction: column; flex: 1` for `1fr` rows to work
-- `app.js` `updateTrendsChart()` ~line 522 — `#trendsMain` is in `display:none` tab on initial load; confirm first render succeeds or add a `setTimeout` guard like the existing one in loadData
-- `pfie-web/tests/responsive.spec.js` — `.leaflet-legend` selector may not match the actual legend DOM class; verify by inspecting the rendered legend element and update the selector if needed
+- `app.js` `computeJitterAmount()` ~line 305 — jitter scale is tied to data coordinate density, not screen pixels; at national zoom it's always sub-pixel; consider scaling to minimum pixel displacement or screen-space units
+- `app.js` `applyJitter()` ~line 48 — `v == null || isNaN(v)` guard skips the `rng()` call, shifting the RNG sequence for all subsequent points; if any point in `pts` has a NaN coordinate (non-numeric string from CSV), downstream points get wrong jitter offsets — worth auditing
+- `pfie-web/data/pfie20142020.csv` — incident 437529 and likely other Florida Keys incidents are geocoded to open water; Option D (land polygon check) is the correct fix
 
 **Next steps:**
-1. Start dev server (`cd pfie-web && python3 -m http.server 8080`) and run `npx playwright test --reporter=list` to get baseline pass/fail
-2. Fix any failures — most likely: legend selector in spec, or `.map-grid` rows not filling height (add `height: 100%` to `.tab-panel#tab-map` if needed)
-3. Manual check at 1440px: confirm all 4 quadrants are equal size, map tiles render, both charts show data
-4. Manual check at 375px: confirm single-column order is correct and each cell has adequate height
+1. Implement Option D: load a US land/coastline GeoJSON (e.g., from Natural Earth or us-atlas), add point-in-polygon check to jitter via rejection sampling — reject offsets that land in water, fall back to raw coordinate after N attempts
+2. Decide on GeoJSON source: Natural Earth 10m land (`ne_10m_land.json`, ~800 KB) or us-atlas state polygons (`states-10m.json`, ~500 KB) — state polygons are preferable since they also enforce state-boundary containment
+3. After Option D: address the jitter-scale issue separately (sub-pixel at national zoom) — possible fix: enforce a minimum pixel displacement by converting `jAmt` from degrees to pixels using the current map zoom level
 
 ---
 
