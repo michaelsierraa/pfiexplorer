@@ -2,6 +2,23 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Current Status
+
+**Session:** 2026-02-21 10:21 CST
+
+**In progress:** Sidebar bug — at half-screen width (~720px CSS viewport, which triggers the `≤900px` mobile breakpoint), opening the sidebar shows the dark navy panel but the filter controls (State, Agency Type, Injury Status, Export, Download button) appear empty/invisible. Only the DATE RANGE label and date inputs are visible at the top, and the case count at the bottom. Root cause not yet identified — was reading `app.js` and `style.css` to diagnose when session was interrupted by output token overflow.
+
+**Suspected areas to investigate (start here next session):**
+- `style.css` lines 127–147: `.sidebar` and `.sidebar-inner` — the `overflow-x: hidden` + `min-width` interaction may be clipping inner content at the mobile breakpoint
+- `app.js` `toggleSidebar()` (line 655): desktop toggle changes `width`, mobile toggle changes `transform` — confirm the right branch fires at ~720px
+
+**Next steps:**
+1. Use `Grep` (not full file reads) to pull just the relevant CSS rules and the `toggleSidebar` function
+2. Identify and fix the clipping/visibility bug
+3. Test at multiple viewport widths (560px, 720px, 900px, 1200px)
+
+---
+
 ## Project Overview
 
 **PFIE (Police Firearm Injury Explorer)** — an interactive data visualization dashboard. The repo contains two things:
