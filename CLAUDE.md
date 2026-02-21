@@ -66,6 +66,21 @@ CSV files (data/)
 - **DataTables column alignment**: Call `columns.adjust()` on tab switch to fix FixedHeader misalignment when the tab was hidden on initial load.
 - **Map tile**: CartoDB Positron (matches original Shiny app).
 
+## Working Style Guidelines (Lessons from Session 2026-02-21)
+
+During the first working session, two significant problems occurred that must be avoided:
+
+1. **Output token overflow**: Reading large files (especially `app.js` at 862 lines and `style.css`) in the same response as performing analysis caused the response to exceed the output token maximum and get cut off mid-action.
+
+2. **Silent extended thinking**: Claude spent 11+ minutes in internal reasoning with no visible output before the user had to interrupt. This is unacceptable — if analysis takes more than a few seconds, produce intermediate output to show progress.
+
+**Rules for future sessions in this repo:**
+- **Read files one at a time** when diagnosing bugs. Do not batch-read multiple large files in a single response.
+- **State your diagnosis immediately** after reading — don't do extended silent reasoning.
+- Before reading `app.js` (862 lines) or `style.css`, ask yourself whether a targeted `Grep` for the relevant section would suffice.
+- If a bug involves CSS layout + JS toggle logic, read the CSS section first, form a hypothesis, then check JS only if needed.
+- Produce a visible working hypothesis before making additional tool calls.
+
 ## Deployment (GitHub Pages)
 
 1. Push repo to GitHub
