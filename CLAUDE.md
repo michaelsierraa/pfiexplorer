@@ -4,23 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-21 16:56 CST
+**Session:** 2026-02-21 17:17 CST
 
-**In progress:** Layout redesign — next task is to restructure the full-screen layout so the map is half-width (left half) and bar chart + trend chart sit side-by-side in the right half. Mobile needs taller map and chart heights in the new stacked layout.
+**In progress:** 2×2 grid layout implemented and Playwright QA tooling installed — needs browser testing to verify visual correctness across viewports.
 
-**Fixes completed this session:**
-- `style.css` lines 118–127: Sidebar backdrop `z-index` raised to 1001 (above Leaflet's max 1000); `top: var(--header-h)` added so it doesn't cover the header
-- `style.css` ~541: Mobile sidebar `z-index` raised to 1002 (above backdrop and Leaflet layers) — fixes sidebar content being obscured by Leaflet map layers
-- `style.css` ~540: Added `@media (min-width: 901px) { .sidebar-backdrop { display: none !important; } }` — fixes backdrop getting stuck visible after resizing from mobile to desktop
-- `app.js` resize handler (~855): Added `clearTimeout`/`setTimeout` debounce (150ms) around `map.invalidateSize()` + `fitMapToData()` — fixes map not re-centering on instantaneous hotkey resize
-- `app.js` legend (`onAdd`): Legend made collapsible with ▾/▸ toggle button
-- `index.html` + `app.js`: Added "Hide/Show Legend" toggle button (fa-eye-slash / fa-eye) to map button row
+**Completed this session:**
+- `index.html` lines 135–200: Map tab restructured to `.map-grid` with 4 `.map-cell` quadrants: controls (top-left), `#pfiemap` (top-right), `#trendsMain` (bottom-left), `#barChart` (bottom-right)
+- `style.css` ~279: Replaced `.map-wrapper`/`.map-below`/`.controls-col`/`.chart-col` rules with `.map-grid` (`display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr`) and `.map-cell` styles
+- `style.css` ~568 mobile block: Grid collapses to 1-column with order: map(1) → controls(2) → bar(3) → trend(4); min-heights 280px/250px
+- `app.js` `updateTrendsChart()` ~line 455: Added `trendsMainTitle` sync and `Plotly.react('trendsMain', ...)` render after the existing `trendsChart` render
+- `app.js`: Added `Plotly.Plots.resize(trendsMain)` to loadData setTimeout (~line 745), window.resize handler (~line 880), and map tab switch handler (~line 860)
+- Playwright installed: `pfie-web/package.json`, `pfie-web/playwright.config.js`, `pfie-web/tests/responsive.spec.js` created; chromium browser downloaded
+
+**Suspected areas to investigate (start here next session):**
+- `style.css` `.map-grid` — verify `grid-template-rows: 1fr 1fr` actually divides the panel height equally; the parent `.tab-panel` must have `display: flex; flex-direction: column; flex: 1` for `1fr` rows to work
+- `app.js` `updateTrendsChart()` ~line 522 — `#trendsMain` is in `display:none` tab on initial load; confirm first render succeeds or add a `setTimeout` guard like the existing one in loadData
+- `pfie-web/tests/responsive.spec.js` — `.leaflet-legend` selector may not match the actual legend DOM class; verify by inspecting the rendered legend element and update the selector if needed
 
 **Next steps:**
-1. Restructure `index.html` map tab: make map container ~50% width and place bar + trend charts in a right-side column side-by-side (`display: flex; flex-direction: row` on the chart column)
-2. Update `style.css` map/chart flex proportions — current map is in `.map-wrapper` / `.map-below` / `.chart-col`; target layout is `[map 50%] [bar+trend 50%]` on desktop
-3. Increase `#pfiemap` height and `.chart-col` min-height in the `@media (max-width: 900px)` block for mobile usability
-4. After layout changes, call `map.invalidateSize()` + `fitMapToData()` on tab switch to handle the new map dimensions
+1. Start dev server (`cd pfie-web && python3 -m http.server 8080`) and run `npx playwright test --reporter=list` to get baseline pass/fail
+2. Fix any failures — most likely: legend selector in spec, or `.map-grid` rows not filling height (add `height: 100%` to `.tab-panel#tab-map` if needed)
+3. Manual check at 1440px: confirm all 4 quadrants are equal size, map tiles render, both charts show data
+4. Manual check at 375px: confirm single-column order is correct and each cell has adequate height
 
 ---
 
