@@ -4,18 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-21 10:25 CST
+**Session:** 2026-02-21 16:56 CST
 
-**In progress:** Sidebar bug — at half-screen width (~720px CSS viewport, which triggers the `≤900px` mobile breakpoint), opening the sidebar shows the dark navy panel but the filter controls (State, Agency Type, Injury Status, Export, Download button) appear empty/invisible. Only the DATE RANGE label and date inputs are visible at the top, and the case count at the bottom. Root cause not yet identified — investigation was interrupted by output token overflow before a fix was applied.
+**In progress:** Layout redesign — next task is to restructure the full-screen layout so the map is half-width (left half) and bar chart + trend chart sit side-by-side in the right half. Mobile needs taller map and chart heights in the new stacked layout.
 
-**Suspected areas to investigate (start here next session):**
-- `style.css` lines 127–147: `.sidebar` and `.sidebar-inner` — the `overflow-x: hidden` + `min-width: 236px` interaction may be clipping inner content when sidebar animates open at the mobile breakpoint
-- `app.js` `toggleSidebar()` (line 655): desktop toggle changes `width`, mobile toggle changes `transform` — confirm the right branch fires at ~720px viewport
+**Fixes completed this session:**
+- `style.css` lines 118–127: Sidebar backdrop `z-index` raised to 1001 (above Leaflet's max 1000); `top: var(--header-h)` added so it doesn't cover the header
+- `style.css` ~541: Mobile sidebar `z-index` raised to 1002 (above backdrop and Leaflet layers) — fixes sidebar content being obscured by Leaflet map layers
+- `style.css` ~540: Added `@media (min-width: 901px) { .sidebar-backdrop { display: none !important; } }` — fixes backdrop getting stuck visible after resizing from mobile to desktop
+- `app.js` resize handler (~855): Added `clearTimeout`/`setTimeout` debounce (150ms) around `map.invalidateSize()` + `fitMapToData()` — fixes map not re-centering on instantaneous hotkey resize
+- `app.js` legend (`onAdd`): Legend made collapsible with ▾/▸ toggle button
+- `index.html` + `app.js`: Added "Hide/Show Legend" toggle button (fa-eye-slash / fa-eye) to map button row
 
 **Next steps:**
-1. Use `Grep` to pull only `.sidebar` and `.sidebar-inner` CSS rules — do not full-read the file
-2. Form a hypothesis and fix before making additional reads
-3. Test at 560px, 720px, 900px, and 1200px viewport widths
+1. Restructure `index.html` map tab: make map container ~50% width and place bar + trend charts in a right-side column side-by-side (`display: flex; flex-direction: row` on the chart column)
+2. Update `style.css` map/chart flex proportions — current map is in `.map-wrapper` / `.map-below` / `.chart-col`; target layout is `[map 50%] [bar+trend 50%]` on desktop
+3. Increase `#pfiemap` height and `.chart-col` min-height in the `@media (max-width: 900px)` block for mobile usability
+4. After layout changes, call `map.invalidateSize()` + `fitMapToData()` on tab switch to handle the new map dimensions
 
 ---
 
