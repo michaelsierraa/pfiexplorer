@@ -4,46 +4,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-21 17:45 CST
+**Session:** 2026-02-22 09:11 CST
 
-**In progress:** Jitter investigation complete (analysis only, no code changes). Next major task is Option D — point-in-polygon land/coastline jitter bounds.
+**In progress:** UI layout redesign — planning phase complete, implementation not yet started.
 
 **Completed this session:**
-- 2×2 grid layout fully implemented and Playwright-verified: 19/19 tests pass across 375px, 720px, 1024px, 1440px viewports
-- Deep investigation of jitter "static point" bug for incident 437529 (Florida Keys):
-  - Confirmed jitter IS applied mathematically (coordinates change at every slider value)
-  - Root cause 1: incident 437529's raw coordinates (24.5611, -81.7733) are in Florida Keys water — a data/geocoding issue, not a jitter artifact
-  - Root cause 2: jitter base = 0.0153° (medianPosDiff of national data); at national zoom (~11 px/°) max slider (10) = 0.17px — sub-pixel, invisible for isolated points
-  - Stacked centroid-fallback points appear to "respond" because their cluster visibly spreads; isolated unique-coordinate points don't visibly move
-  - Playwright investigation script at `/tmp/investigate_jitter.mjs` documents the analysis
+- Default marker size changed from 5 → 2 (`index.html` lines 146, 148); committed
+- Geocoding audit completed (Python scripts, no code changes to app):
+  - All 1,437 unique incidents have valid lat/lon — state-centroid fallback in `app.js` never fires
+  - Zero city-centroid placeholder coords; GVA geocoded all incidents to specific locations
+  - The 602 "shared coordinate" rows from the row-level analysis are entirely explained by 259 multi-officer incidents (multiple officers per scene, same lat/lon is correct)
+  - Only 1 coordinate genuinely shared by 2 different incidents: Phoenix incidents 111912 (2014-03-03, 1 fatal + 1 nonfatal) and 938446 (2017-09-20, 1 nonfatal) both at 43rd Ave & Bethany Home Rd
+  - Geocoding enrichment backlog item updated: task is largely resolved; raw data is clean
+- UI layout design planning: 4 candidate layouts defined (A=toolbar strip, B=60/40 map-dominant, C=full-width map + charts below, D=stats header + dashboard)
 
 **Suspected areas to investigate (start here next session):**
-- `app.js` `computeJitterAmount()` ~line 305 — jitter scale is tied to data coordinate density, not screen pixels; at national zoom it's always sub-pixel; consider scaling to minimum pixel displacement or screen-space units
-- `app.js` `applyJitter()` ~line 48 — `v == null || isNaN(v)` guard skips the `rng()` call, shifting the RNG sequence for all subsequent points; if any point in `pts` has a NaN coordinate (non-numeric string from CSV), downstream points get wrong jitter offsets — worth auditing
-- `pfie-web/data/pfie20142020.csv` — incident 437529 and likely other Florida Keys incidents are geocoded to open water; Option D (land polygon check) is the correct fix
+- `index.html` lines 135–200 + `style.css` `.map-grid` — controls cell is the layout problem; regardless of final layout choice, controls must move out of the 2×2 grid into a toolbar strip above the visualization area
+- `style.css` `.controls-col` / `.map-btn-row` / `.slider-row` — these will need to be reflowed for horizontal toolbar orientation (flex-direction: row, compact heights)
+- `app.js` `computeJitterAmount()` ~line 305 — jitter sub-pixel at national zoom still unaddressed; separate from layout work
 
 **Next steps:**
-1. Implement Option D: load a US land/coastline GeoJSON (e.g., from Natural Earth or us-atlas), add point-in-polygon check to jitter via rejection sampling — reject offsets that land in water, fall back to raw coordinate after N attempts
-2. Decide on GeoJSON source: Natural Earth 10m land (`ne_10m_land.json`, ~800 KB) or us-atlas state polygons (`states-10m.json`, ~500 KB) — state polygons are preferable since they also enforce state-boundary containment
-3. After Option D: address the jitter-scale issue separately (sub-pixel at national zoom) — possible fix: enforce a minimum pixel displacement by converting `jAmt` from degrees to pixels using the current map zoom level
-4. **Data enrichment — reduce centroid-defaulted points** (see backlog below)
+1. Extract controls (sliders + buttons) from `.controls-cell` into a horizontal toolbar strip (`<div class="map-toolbar">`) above the visualization grid — this fixes the empty-space problem regardless of layout choice
+2. Resize the grid to 3 cells after removing controls cell: map (left, ~55%) + bar chart (top-right) + trend chart (bottom-right), or full-width map + two charts below (Layout C)
+3. Add `data-layout` attribute to `.map-grid` and write CSS variants for layouts A/B/C so they can be toggled with a dev button — then use Playwright screenshots to compare at 1440px and 1024px
+4. Implement Option D (point-in-polygon jitter bounds) as a separate track — GeoJSON source decision: us-atlas `states-10m.json` (~500 KB) preferred over Natural Earth land polygons
 
 ## Backlog
 
-### Geocoding enrichment — reduce centroid-placeholder points
+### Geocoding enrichment — RESOLVED
+Audit confirmed all 1,437 production incidents have address-level geocoding from GVA. No centroid placeholders exist. Raw file `raw2014_20GVA.csv` contains city + address fields for all incidents and is available at repo root for reference.
 
-Many incidents likely have state centroid coordinates as placeholders rather than true incident locations (GVA sometimes records only state-level geography). These inflate apparent centroid clusters and make jitter misleading.
+### Jitter — Option D (point-in-polygon bounds)
+Implement rejection sampling against us-atlas state polygons to prevent jitter from crossing state lines or landing in water. Load `states-10m.json` at startup alongside existing CSVs; add `pointInPolygon()` check in `drawMapPoints()` before placing jittered marker.
 
-**Step 1 — Audit:** Write a script that compares each row's `latitude`/`longitude` to `statecentroids.csv` values. Any exact or near-exact match (within ~0.001°) is a suspected centroid placeholder. Output a list of affected `incidentid`s and a count per state.
-
-**Step 2 — Source of truth:** The CSV has no city/address field. Re-geocoding options:
-- **GVA website**: Each `incidentid` corresponds to a GVA record at `gunviolencearchive.org`. GVA records often include city and address. A scraping script (rate-limited, respectful) could retrieve city data for centroid-placeholder incidents.
-- **Source URLs**: The `sources` column contains news article URLs. NLP/regex on article text could extract city names, but is noisy.
-- **Manual review**: For a small number of high-value incidents (e.g., those in coastal states where centroids land in water), manual correction may be practical.
-
-**Step 3 — Geocode:** Use Nominatim (OpenStreetMap, free, no API key) or Census Geocoder to convert city+state → lat/lon for the affected incidents. Store results in a supplemental file (e.g., `pfie-web/data/geocode_corrections.csv` with columns `incidentid,latitude,longitude`) and apply as an override in `loadData()`.
-
-**Constraint:** The CSV is the authoritative data file; corrections should be applied as a separate overlay, not by modifying the original CSV, so the provenance is clear.
+### Jitter — sub-pixel scale at national zoom
+`computeJitterAmount()` returns 0.0153° max (1.7 km) at national zoom — sub-pixel and invisible for single-point incidents. Consider scaling jitter to enforce a minimum screen-pixel displacement using `map.getZoom()` and `map.latLngToContainerPoint()`.
 
 ---
 
