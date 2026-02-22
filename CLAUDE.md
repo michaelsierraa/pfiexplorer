@@ -4,30 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-22 09:11 CST
+**Session:** 2026-02-22 12:08 CST
 
-**In progress:** UI layout redesign — planning phase complete, implementation not yet started.
+**In progress:** Nothing — chart title legibility fix complete and committed.
 
 **Completed this session:**
-- Default marker size changed from 5 → 2 (`index.html` lines 146, 148); committed
-- Geocoding audit completed (Python scripts, no code changes to app):
-  - All 1,437 unique incidents have valid lat/lon — state-centroid fallback in `app.js` never fires
-  - Zero city-centroid placeholder coords; GVA geocoded all incidents to specific locations
-  - The 602 "shared coordinate" rows from the row-level analysis are entirely explained by 259 multi-officer incidents (multiple officers per scene, same lat/lon is correct)
-  - Only 1 coordinate genuinely shared by 2 different incidents: Phoenix incidents 111912 (2014-03-03, 1 fatal + 1 nonfatal) and 938446 (2017-09-20, 1 nonfatal) both at 43rd Ave & Bethany Home Rd
-  - Geocoding enrichment backlog item updated: task is largely resolved; raw data is clean
-- UI layout design planning: 4 candidate layouts defined (A=toolbar strip, B=60/40 map-dominant, C=full-width map + charts below, D=stats header + dashboard)
+- Plotly chart title legibility fix (`app.js` lines 411, 437, 441, 445, 462, 516, 519, 523):
+  - Replaced `<sub>` subtitle tags with `<span style="font-size:12px;color:#5a6a7a">` for predictable sizing (both bar and trends charts)
+  - Increased main title font from 12px → 14px; pad from t:4 → t:6 (both charts)
+  - Increased top margin from t:62 → t:80 to give legend and subtitle breathing room (both charts)
+  - Raised legend y from 1.1 → 1.12 (both charts)
+  - All 19 Playwright tests pass
 
 **Suspected areas to investigate (start here next session):**
-- `index.html` lines 135–200 + `style.css` `.map-grid` — controls cell is the layout problem; regardless of final layout choice, controls must move out of the 2×2 grid into a toolbar strip above the visualization area
-- `style.css` `.controls-col` / `.map-btn-row` / `.slider-row` — these will need to be reflowed for horizontal toolbar orientation (flex-direction: row, compact heights)
-- `app.js` `computeJitterAmount()` ~line 305 — jitter sub-pixel at national zoom still unaddressed; separate from layout work
+- `index.html` lines 135–200 + `style.css` `.map-grid` — controls cell layout problem; controls must move out of the 2×2 grid into a toolbar strip above the visualization area
+- `style.css` `.controls-col` / `.map-btn-row` / `.slider-row` — need reflow for horizontal toolbar (flex-direction: row, compact heights)
+- `app.js` `computeJitterAmount()` ~line 305 — jitter sub-pixel at national zoom still unaddressed
 
 **Next steps:**
-1. Extract controls (sliders + buttons) from `.controls-cell` into a horizontal toolbar strip (`<div class="map-toolbar">`) above the visualization grid — this fixes the empty-space problem regardless of layout choice
+1. Extract controls (sliders + buttons) from `.controls-cell` into a horizontal toolbar strip (`<div class="map-toolbar">`) above the visualization grid
 2. Resize the grid to 3 cells after removing controls cell: map (left, ~55%) + bar chart (top-right) + trend chart (bottom-right), or full-width map + two charts below (Layout C)
 3. Add `data-layout` attribute to `.map-grid` and write CSS variants for layouts A/B/C so they can be toggled with a dev button — then use Playwright screenshots to compare at 1440px and 1024px
-4. Implement Option D (point-in-polygon jitter bounds) as a separate track — GeoJSON source decision: us-atlas `states-10m.json` (~500 KB) preferred over Natural Earth land polygons
+4. Implement Option D (point-in-polygon jitter bounds) as a separate track — GeoJSON source: us-atlas `states-10m.json` (~500 KB)
 
 ## Backlog
 
