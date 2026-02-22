@@ -675,7 +675,11 @@ function setFreezeState(frozen) {
 function toggleSidebar() {
   const sidebar  = document.getElementById('sidebar');
   const backdrop = document.getElementById('sidebarBackdrop');
+  const btn      = document.getElementById('sidebarToggle');
   const isCollapsed = sidebar.classList.toggle('collapsed');
+
+  // Button: green when sidebar is open, orange when closed
+  btn.classList.toggle('sidebar-open', !isCollapsed);
 
   // Mobile backdrop
   if (window.innerWidth <= 900) {
@@ -769,9 +773,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Map (must init before data load so container exists in DOM)
   initMap();
 
-  // On mobile, collapse sidebar by default
+  // On mobile, collapse sidebar by default; on desktop it starts open
   if (window.innerWidth <= 900) {
     document.getElementById('sidebar').classList.add('collapsed');
+    // Button starts orange (sidebar closed)
+  } else {
+    // Button starts green (sidebar open)
+    document.getElementById('sidebarToggle').classList.add('sidebar-open');
   }
 
   // ── Date pickers ──────────────────────────────────────────────────────────
