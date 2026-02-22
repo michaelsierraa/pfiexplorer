@@ -214,18 +214,31 @@ function initMap() {
     }
   ).addTo(map);
 
-  // Legend
+  // Legend (collapsible)
   const legend = L.control({ position: 'bottomright' });
   legend.onAdd = () => {
     const div = L.DomUtil.create('div', 'leaflet-legend');
     div.innerHTML = `
-      <div class="legend-title">Injury Status</div>
-      <div class="legend-item">
-        <span class="legend-dot" style="background:${FATAL_COLOR}"></span>Fatal
+      <div class="legend-header">
+        <span class="legend-title">Injury Status</span>
+        <button class="legend-toggle" aria-label="Toggle legend">&#9662;</button>
       </div>
-      <div class="legend-item">
-        <span class="legend-dot" style="background:${NONFATAL_COLOR}"></span>Nonfatal
+      <div class="legend-body">
+        <div class="legend-item">
+          <span class="legend-dot" style="background:${FATAL_COLOR}"></span>Fatal
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background:${NONFATAL_COLOR}"></span>Nonfatal
+        </div>
       </div>`;
+
+    const btn = div.querySelector('.legend-toggle');
+    L.DomEvent.on(btn, 'click', L.DomEvent.stopPropagation);
+    L.DomEvent.on(btn, 'click', () => {
+      const collapsed = div.classList.toggle('collapsed');
+      btn.innerHTML = collapsed ? '&#9656;' : '&#9662;';
+    });
+
     return div;
   };
   legend.addTo(map);
@@ -440,6 +453,8 @@ function updateTrendsChart() {
   const f     = getFilters();
   const title = 'Monthly ' + buildTitleBase();
   document.getElementById('trendsTitle').textContent = title;
+  const mainTitleEl = document.getElementById('trendsMainTitle');
+  if (mainTitleEl) mainTitleEl.textContent = title;
 
   // Aggregate by month + statuslabel
   const monthMap = {};
@@ -504,6 +519,11 @@ function updateTrendsChart() {
   };
 
   Plotly.react('trendsChart', traces, layout, { displayModeBar: false, responsive: true });
+
+  // Also render into the embedded map-tab instance
+  if (document.getElementById('trendsMain')) {
+    Plotly.react('trendsMain', traces, layout, { displayModeBar: false, responsive: true });
+  }
 }
 
 // ── DATA TABLE ────────────────────────────────────────────────────────────────
@@ -730,6 +750,7 @@ async function loadData() {
     setTimeout(() => {
       Plotly.Plots.resize(document.getElementById('barChart'));
       Plotly.Plots.resize(document.getElementById('trendsChart'));
+      Plotly.Plots.resize(document.getElementById('trendsMain'));
     }, 150);
 
   } catch (err) {
@@ -811,6 +832,16 @@ document.addEventListener('DOMContentLoaded', () => {
     setFreezeState(!isFrozen);
   });
 
+  document.getElementById('toggleLegend').addEventListener('click', function () {
+    const legendEl = document.querySelector('.leaflet-legend');
+    const hiding = legendEl.style.display !== 'none';
+    legendEl.style.display = hiding ? 'none' : '';
+    this.innerHTML = hiding
+      ? '<i class="fa-solid fa-eye"></i> Show Legend'
+      : '<i class="fa-solid fa-eye-slash"></i> Hide Legend';
+    this.classList.toggle('active', hiding);
+  });
+
   // ── Tab switching ──────────────────────────────────────────────────────────
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', function () {
@@ -834,7 +865,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 30);
       }
       if (this.dataset.tab === 'map') {
-        setTimeout(() => Plotly.Plots.resize(document.getElementById('barChart')), 30);
+        setTimeout(() => {
+          Plotly.Plots.resize(document.getElementById('barChart'));
+          Plotly.Plots.resize(document.getElementById('trendsMain'));
+        }, 30);
         map.invalidateSize();
       }
       if (this.dataset.tab === 'data') {
@@ -852,9 +886,26 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('downloadBtn').addEventListener('click', downloadData);
 
   // ── Window resize → keep Plotly charts full-width ─────────────────────────
+  let resizeTimer = null;
   window.addEventListener('resize', () => {
     Plotly.Plots.resize(document.getElementById('barChart'));
     Plotly.Plots.resize(document.getElementById('trendsChart'));
+    Plotly.Plots.resize(document.getElementById('trendsMain'));
+
+    // When crossing from mobile → desktop, clear the backdrop so it
+    // doesn't stay stuck as a dark overlay after the breakpoint passes.
+    if (window.innerWidth > 900) {
+      document.getElementById('sidebarBackdrop').classList.remove('active');
+    }
+
+    // Debounce the Leaflet recalculation so it runs after the browser has
+    // finished layout reflow — handles both drag-resize and instant hotkey
+    // resizes where the container dimensions aren't settled yet.
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      map.invalidateSize();
+      if (!isFrozen) fitMapToData();
+    }, 150);
   });
 
   // ── Load data (async) ──────────────────────────────────────────────────────
