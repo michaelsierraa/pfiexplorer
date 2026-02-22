@@ -134,51 +134,66 @@
       <!-- ── MAP TAB ──────────────────────────────────────────────────── -->
       <div class="tab-panel active" id="tab-map" role="tabpanel">
 
-        <div class="map-wrapper">
-          <div id="pfiemap"></div>
-        </div>
+        <div class="map-grid">
 
-        <div class="map-below">
-          <!-- Left: sliders + buttons -->
-          <div class="controls-col">
-            <div class="slider-row">
-              <div class="slider-group">
-                <div class="slider-header">
-                  <label class="slider-label" for="markerSize">Marker Size</label>
-                  <span class="slider-val" id="markerSizeVal">5</span>
+          <!-- TOP-LEFT: controls -->
+          <div class="map-cell controls-cell">
+            <div class="controls-col">
+              <div class="slider-row">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <label class="slider-label" for="markerSize">Marker Size</label>
+                    <span class="slider-val" id="markerSizeVal">2</span>
+                  </div>
+                  <input type="range" id="markerSize" min="1" max="10" value="2" step="1">
                 </div>
-                <input type="range" id="markerSize" min="1" max="10" value="5" step="1">
-              </div>
-              <div class="slider-group">
-                <div class="slider-header">
-                  <label class="slider-label" for="jitterScale">Map Jitter</label>
-                  <span class="slider-val" id="jitterScaleVal">3</span>
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <label class="slider-label" for="jitterScale">Map Jitter</label>
+                    <span class="slider-val" id="jitterScaleVal">3</span>
+                  </div>
+                  <input type="range" id="jitterScale" min="0" max="10" value="3" step="0.5">
                 </div>
-                <input type="range" id="jitterScale" min="0" max="10" value="3" step="0.5">
               </div>
-            </div>
 
-            <div class="map-btn-row">
-              <button class="map-btn" id="toggleClustering">
-                <i class="fa-solid fa-circle-nodes"></i>
-                Enable Clustering
-              </button>
-              <button class="map-btn" id="fitAll">
-                <i class="fa-solid fa-expand"></i>
-                Fit to Cases
-              </button>
-              <button class="map-btn" id="freezeMap">
-                <i class="fa-solid fa-snowflake"></i>
-                Freeze Map
-              </button>
+              <div class="map-btn-row">
+                <button class="map-btn" id="toggleClustering">
+                  <i class="fa-solid fa-circle-nodes"></i>
+                  Enable Clustering
+                </button>
+                <button class="map-btn" id="fitAll">
+                  <i class="fa-solid fa-expand"></i>
+                  Fit to Cases
+                </button>
+                <button class="map-btn" id="freezeMap">
+                  <i class="fa-solid fa-snowflake"></i>
+                  Freeze Map
+                </button>
+                <button class="map-btn" id="toggleLegend">
+                  <i class="fa-solid fa-eye-slash"></i>
+                  Hide Legend
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Right: bar chart -->
-          <div class="chart-col">
+          <!-- TOP-RIGHT: map -->
+          <div class="map-cell map-cell--map">
+            <div id="pfiemap"></div>
+          </div>
+
+          <!-- BOTTOM-LEFT: trend chart -->
+          <div class="map-cell trend-cell">
+            <div class="chart-title" id="trendsMainTitle"></div>
+            <div id="trendsMain" class="plot-area"></div>
+          </div>
+
+          <!-- BOTTOM-RIGHT: bar chart -->
+          <div class="map-cell bar-cell">
             <div class="chart-title" id="barChartTitle"></div>
             <div id="barChart" class="plot-area"></div>
           </div>
+
         </div>
 
       </div><!-- end map tab -->
