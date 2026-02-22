@@ -400,15 +400,15 @@ function updateBarChart() {
     }
   });
 
-  // Dynamic title
-  const barTitle = {
+  // Dynamic title (two-line: metric + filter context as subtitle)
+  const barMetric = {
     All:      'Fatal and Nonfatal Police Firearm Injuries by Agency Type',
     Fatal:    'Fatal Police Firearm Injuries by Agency Type',
     Nonfatal: 'Nonfatal Police Firearm Injuries by Agency Type',
   }[f.status];
-  const stateLbl = f.state === 'National' ? 'United States' : f.state;
-  const titleStr = `${barTitle} — ${stateLbl} — ${fmtDate(f.start)} to ${fmtDate(f.end)}`;
-  document.getElementById('barChartTitle').textContent = titleStr;
+  const stateLbl  = f.state === 'National' ? 'United States' : f.state;
+  const agencyLbl = f.agency === 'All' ? 'All Agencies' : f.agency;
+  const titleText = `${barMetric}<br><span style="font-size:12px;color:#5a6a7a">${stateLbl} · ${agencyLbl} · ${fmtMonthLabel(f.start)} – ${fmtMonthLabel(f.end)}</span>`;
 
   // Traces
   const traces = [];
@@ -434,14 +434,15 @@ function updateBarChart() {
   }
 
   const layout = {
+    title:         { text: titleText, x: 0.02, xanchor: 'left', font: { family: FONT_FAMILY, size: 14, color: '#1a202c' }, pad: { t: 6 } },
     barmode:       'group',
     paper_bgcolor: '#ffffff',
     plot_bgcolor:  '#ffffff',
-    margin:        { t: 8, r: 10, b: 60, l: 44 },
+    margin:        { t: 80, r: 10, b: 60, l: 44 },
     font:          { family: FONT_FAMILY, size: 12 },
     xaxis:         { title: '', tickangle: -30, tickfont: { size: 11 } },
     yaxis:         { title: 'Count', gridcolor: '#edf0f3', tickfont: { size: 11 } },
-    legend:        { orientation: 'h', x: 0, y: 1.08, font: { size: 12 } },
+    legend:        { orientation: 'h', x: 0, y: 1.12, font: { size: 12 } },
     showlegend:    true,
   };
 
@@ -450,11 +451,15 @@ function updateBarChart() {
 
 // ── TRENDS CHART ──────────────────────────────────────────────────────────────
 function updateTrendsChart() {
-  const f     = getFilters();
-  const title = 'Monthly ' + buildTitleBase();
-  document.getElementById('trendsTitle').textContent = title;
-  const mainTitleEl = document.getElementById('trendsMainTitle');
-  if (mainTitleEl) mainTitleEl.textContent = title;
+  const f         = getFilters();
+  const stateLbl  = f.state === 'National' ? 'United States' : f.state;
+  const agencyLbl = f.agency === 'All' ? 'All Agencies' : f.agency;
+  const trendsMetric = {
+    All:      'Monthly Fatal and Nonfatal Police Firearm Injuries',
+    Fatal:    'Monthly Fatal Police Firearm Injuries',
+    Nonfatal: 'Monthly Nonfatal Police Firearm Injuries',
+  }[f.status];
+  const titleText = `${trendsMetric}<br><span style="font-size:12px;color:#5a6a7a">${stateLbl} · ${agencyLbl} · ${fmtMonthLabel(f.start)} – ${fmtMonthLabel(f.end)}</span>`;
 
   // Aggregate by month + statuslabel
   const monthMap = {};
@@ -508,13 +513,14 @@ function updateTrendsChart() {
   ];
 
   const layout = {
+    title:         { text: titleText, x: 0.02, xanchor: 'left', font: { family: FONT_FAMILY, size: 14, color: '#1a202c' }, pad: { t: 6 } },
     paper_bgcolor: '#ffffff',
     plot_bgcolor:  '#ffffff',
-    margin:        { t: 10, r: 20, b: 70, l: 55 },
+    margin:        { t: 80, r: 20, b: 70, l: 55 },
     font:          { family: FONT_FAMILY, size: 13 },
     xaxis:         { type: 'date', tickformat: '%b %Y', tickmode: 'auto', nticks: 30, title: '', showgrid: false, tickangle: -35, tickfont: { size: 12 } },
     yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 12 } },
-    legend:        { orientation: 'h', x: 0, y: 1.06, font: { size: 13 } },
+    legend:        { orientation: 'h', x: 0, y: 1.12, font: { size: 13 } },
     hovermode:     'x unified',
   };
 
