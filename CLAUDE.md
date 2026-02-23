@@ -4,24 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-23 14:33 CST
+**Session:** 2026-02-23 15:40 CST
 
-**In progress:** All queued tasks complete. No active work items — awaiting new direction.
+**In progress:** All work complete. Awaiting new direction.
 
 **Resolved this session:**
-- Task #7 — Mobile sidebar close button (`css/style.css` `@media (max-width: 900px)` block): added `.sidebar-toggle.sidebar-open { position: fixed; top: 9px; right: 12px; z-index: 1003; }` and `.tab-nav-divider { display: none; }` — commit `b8cf9ef`
-- Task #2 — Y-axis parity (`js/app.js` `updateBarChart()` layout): `margin.l: 44→55`, `yaxis.tickfont size: 11→12` — commit `b332a7d`
-- Task #3 — LOESS legend toggle (`js/app.js` `makeTraces()` inside `updateTrendsChart()`): added `legendgroup: name` to both scatter and LOESS traces — commit `fd84f6b`
-- Task #4 — Large-screen fonts (`css/style.css` end of file): added `@media (min-width: 1400px)` block — commit `4e47221`
-- Playwright infrastructure: `playwright.config.mjs` created (ESM/CJS fix); 4 test files in `pfie-web/tests/`, all passing
+- Mobile plot heights: `css/style.css` line 630–631 (`@media (max-width: 900px)`): `.trend-cell` and `.bar-cell` `min-height: 250px → 375px` — commit `b851f1e`
+- Mobile trends x-axis ticks: `js/app.js` line 523–525 (`updateTrendsChart()` layout): on `window.innerWidth <= 900`, switched to `tickmode: 'linear'`, `dtick: 'M12'`, `tickformat: '%Y'` for one label/year; desktop unchanged — commit `b851f1e`
+- Mobile x-axis label rotation: `js/app.js` line 524: `tickangle: 0 → -35` on mobile — commit `0b8b861`
+- Toolbar scrolls away on mobile: `css/style.css` (`@media (max-width: 900px)`): moved scroll container from `.map-grid` to `#tab-map` (`overflow-y: auto`); `.map-grid` now `flex: none` — commit `faa8ff4`
+- Mobile buttons 2×2 grid: `css/style.css` (`@media (max-width: 560px)`): `.map-btn-row` changed from `flex-direction: column` to `flex-direction: row; flex-wrap: wrap`; `.map-btn` from `width: 100%` to `flex: 0 0 calc(50% - 4px)` — commit `f7925c8`
 
 **Suspected areas to investigate (start here next session):**
-- `pfie-web/tests/task7-mobile-sidebar.spec.js` — could expand to assert toggle button `position: fixed` via `getComputedStyle` for stronger coverage
-- `js/app.js` `makeTraces()` (~line 479) — LOESS `legendgroupTitle` could be added for cleaner grouped legend label if desired
+- `js/app.js` line 523–525 — mobile x-axis tick `tick0: '2014-01-01'` is hardcoded; if date range filter changes the visible range, ticks may not align to filtered data start year; consider deriving `tick0` from `filteredData` min date
+- `css/style.css` line 629 — `.map-cell--map { min-height: 280px; }` on mobile; map may feel short relative to the now-taller charts; could increase to 320–360px if desired
+- `pfie-web/tests/` — no Playwright coverage yet for the new mobile scroll behavior or 2×2 button layout
 
 **Next steps:**
-1. **Manual QA**: Open app at 375px and verify sidebar toggle stays pinned when open; open at 1440px and verify font scaling is visible
-2. Await new feature requests
+1. **Manual QA**: Load at 375px, scroll down past toolbar, verify toolbar disappears and plots fill screen; verify 2×2 button layout; verify yearly x-axis ticks on trends chart
+2. **tick0 fix** (if needed): derive from `Math.min(...filteredData.map(r => r._date))` and format as `'YYYY-01-01'` instead of hardcoding `'2014-01-01'`
 
 ---
 
