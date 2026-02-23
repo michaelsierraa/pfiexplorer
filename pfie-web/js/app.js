@@ -438,10 +438,10 @@ function updateBarChart() {
     barmode:       'group',
     paper_bgcolor: '#ffffff',
     plot_bgcolor:  '#ffffff',
-    margin:        { t: 120, r: 24, b: 60, l: 44 },
+    margin:        { t: 120, r: 24, b: 60, l: 55 },
     font:          { family: FONT_FAMILY, size: 12 },
     xaxis:         { title: '', tickangle: -30, tickfont: { size: 11 } },
-    yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 11 } },
+    yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 12 } },
     legend:        { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.0, yanchor: 'bottom', font: { size: 11 } },
     showlegend:    true,
   };
