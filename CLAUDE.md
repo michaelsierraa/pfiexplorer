@@ -4,29 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-22 12:08 CST
+**Session:** 2026-02-22 23:51 CST
 
-**In progress:** Nothing — chart title legibility fix complete and committed.
-
-**Completed this session:**
-- Plotly chart title legibility fix (`app.js` lines 411, 437, 441, 445, 462, 516, 519, 523):
-  - Replaced `<sub>` subtitle tags with `<span style="font-size:12px;color:#5a6a7a">` for predictable sizing (both bar and trends charts)
-  - Increased main title font from 12px → 14px; pad from t:4 → t:6 (both charts)
-  - Increased top margin from t:62 → t:80 to give legend and subtitle breathing room (both charts)
-  - Raised legend y from 1.1 → 1.12 (both charts)
-  - All 19 Playwright tests pass
+**In progress:** Two open bugs (Tasks #6, #7) parked for next session.
 
 **Suspected areas to investigate (start here next session):**
-- `index.html` lines 135–200 + `style.css` `.map-grid` — controls cell layout problem; controls must move out of the 2×2 grid into a toolbar strip above the visualization area
-- `style.css` `.controls-col` / `.map-btn-row` / `.slider-row` — need reflow for horizontal toolbar (flex-direction: row, compact heights)
-- `app.js` `computeJitterAmount()` ~line 305 — jitter sub-pixel at national zoom still unaddressed
+- `app.js` line ~923 — `document.fonts.ready` re-render did NOT fix Chrome legend clip; root cause still unknown. Chrome clips "Nonfatal" legend label; Safari does not. Playwright headless cannot reproduce (no Google Fonts loaded).
+- `css/style.css` `.map-cell` line 378 — `overflow: hidden` is the clip source; `max-width:100%` on `.plot-area` (line 423) did not help
+- `css/style.css` `@media (max-width: 900px)` line 594 — sidebar toggle hidden behind sidebar overlay on mobile; CSS fix planned: `position:fixed; top:9px; right:12px; z-index:1003` on `.tab-nav .sidebar-toggle`
 
 **Next steps:**
-1. Extract controls (sliders + buttons) from `.controls-cell` into a horizontal toolbar strip (`<div class="map-toolbar">`) above the visualization grid
-2. Resize the grid to 3 cells after removing controls cell: map (left, ~55%) + bar chart (top-right) + trend chart (bottom-right), or full-width map + two charts below (Layout C)
-3. Add `data-layout` attribute to `.map-grid` and write CSS variants for layouts A/B/C so they can be toggled with a dev button — then use Playwright screenshots to compare at 1440px and 1024px
-4. Implement Option D (point-in-polygon jitter bounds) as a separate track — GeoJSON source: us-atlas `states-10m.json` (~500 KB)
-
+1. **Task #7 (mobile toggle):** In `style.css` `@media (max-width: 900px)` block: add `.tab-nav .sidebar-toggle { position: fixed; top: 9px; right: 12px; z-index: 1003; }` and `.tab-nav-divider { display: none; }` — CSS-only, no HTML changes
+2. **Task #6 (Chrome legend clip):** Try Playwright with WebKit to confirm Chrome-only. Force `Plotly.react()` re-call after `document.fonts.ready` (not just resize). Or increase `margin.r` to 50+ on both charts as a blunt buffer fix.
 ## Backlog
 
 ### Geocoding enrichment — RESOLVED
