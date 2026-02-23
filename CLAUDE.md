@@ -4,36 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-23 11:35 CST
+**Session:** 2026-02-23 14:28 CST
 
-**In progress:** All queued tasks resolved this session. Backlog items identified for next session.
+**In progress:** All 4 queued tasks completed this session via autonomous subagents with Playwright tests. Backlog items remain.
 
 **Resolved this session:**
-- Renamed "Map" tab → "Plots" (`index.html` line 129) — commit `1a1676b`
-- Fixed Plotly legend overlap with subtitle at all screen sizes — commit `7292807`:
-  - Both charts: `margin.t: 92 → 120`, `legend.y: 1.12 → 1.0`, added `legend.yanchor: 'bottom'`
-  - Root cause: `yref:'container'` title vs paper-coord legend converged at H_plot≈382px
-  - Fix: anchor legend bottom to top of plot area (fixed pixel = margin.t), independent of H_plot
-- Added `/compact` as step 6 to `~/.claude/commands/update-status.md`
-
-**Task #7 (mobile sidebar close) — deferred, plan ready:**
-Option A (CSS-only, recommended): in `style.css` `@media (max-width: 900px)` block (~line 600), add:
-```css
-.sidebar-toggle.sidebar-open { position: fixed; top: 9px; right: 12px; z-index: 1003; }
-.tab-nav-divider { display: none; }
-```
+- Task #7 — Mobile sidebar close button (`css/style.css` `@media (max-width: 900px)` block): added `.sidebar-toggle.sidebar-open { position: fixed; top: 9px; right: 12px; z-index: 1003; }` and `.tab-nav-divider { display: none; }` — commit `b8cf9ef`
+- Task #2 — Y-axis parity (`js/app.js` `updateBarChart()` layout): `margin.l: 44→55`, `yaxis.tickfont size: 11→12` — commit `b332a7d`
+- Task #3 — LOESS legend toggle (`js/app.js` `makeTraces()` inside `updateTrendsChart()`): added `legendgroup: name` to both scatter and LOESS traces; clicking a legend item now hides/shows both — commit `fd84f6b`
+- Task #4 — Large-screen fonts (`css/style.css` end of file): added `@media (min-width: 1400px)` block scaling body (14→16px), tabs (14→16px), selects (13→15px), labels (11→13px), date inputs (12→14px), download button (13→15px) — commit `4e47221`
+- Playwright infrastructure: `playwright.config.mjs` created (ESM/CJS fix); 3 new test files in `pfie-web/tests/`
 
 **Suspected areas to investigate (start here next session):**
-- `css/style.css` line ~600 (`@media (max-width: 900px)`) — Task #7 mobile toggle fix
-- `js/app.js` line ~519–523 — y-axis parity: trends uses `tickfont:{size:12}`, bar uses `size:11`; trends `margin.l:55`, bar `margin.l:44`
-- `js/app.js` line ~490–510 — trend line toggle: LOESS traces have `showlegend:false`; need to link visibility to the scatter trace legend toggle
-- `css/style.css` root/global font sizes — large-screen font scaling for buttons, dropdowns, tabs
+- `pfie-web/tests/` — all 4 new test files passed; consider expanding mobile sidebar test to assert toggle button computed position (fixed, top: 9px) via `getComputedStyle`
+- `js/app.js` `makeTraces()` (~line 479) — LOESS `legendgroupTitle` could be added for cleaner legend grouping if desired
+- Backlog: `js/app.js` `drawMapPoints()` — Option D jitter (point-in-polygon rejection sampling against us-atlas polygons)
+- Backlog: `js/app.js` `computeJitterAmount()` — sub-pixel jitter at national zoom; minimum screen-pixel displacement fix
 
 **Next steps:**
-1. **Task #7**: Apply Option A CSS (2 lines in `style.css` media block)
-2. **Y-axis parity**: Align bar chart `yaxis.tickfont` to `size:12` and `margin.l` to 55 to match trends chart
-3. **Trend line toggle**: In `updateTrendsChart()`, give each LOESS trace a `legendgroup` matching its scatter trace and set `showlegend:false` + `visible` tied to the scatter's legend state — or use Plotly `legendgroup` to auto-link
-4. **Large-screen fonts**: Add `@media (min-width: 1400px)` block in `style.css` scaling up button/tab/select font sizes
+1. **Jitter Option D**: Load `states-10m.json` at startup; add `pointInPolygon()` check in `drawMapPoints()` before placing jittered marker
+2. **Jitter sub-pixel**: In `computeJitterAmount()`, use `map.getZoom()` + `map.latLngToContainerPoint()` to enforce a minimum screen-pixel displacement
+3. **Manual QA**: Open app at 375px and verify sidebar toggle stays pinned when open; open at 1440px and verify font scaling is visible
 
 ---
 
