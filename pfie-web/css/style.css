@@ -619,12 +619,14 @@ table.dataTable tbody td a:hover { color: var(--accent); text-decoration: underl
   .toolbar-divider { display: none; }
   .map-btn-row     { flex: 1 1 100%; }
 
-  /* Single-column stack on mobile: Map → Trend → Bar */
+  /* Single-column stack on mobile: Map → Trend → Bar.
+     The whole tab panel scrolls so the toolbar scrolls away with the map. */
+  #tab-map { overflow-y: auto; }
   .map-grid {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto;
     grid-template-areas: "map" "trend" "bar";
-    overflow-y: auto;
+    flex: none;
   }
   .map-cell--map { min-height: 280px; }
   .trend-cell    { min-height: 375px; }
