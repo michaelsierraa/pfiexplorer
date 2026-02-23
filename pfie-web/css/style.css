@@ -423,7 +423,7 @@ a:hover { color: var(--accent); text-decoration: underline; }
 .plot-area {
   flex: 1;
   min-height: 0;
-  width: 100%;
+  max-width: 100%;
 }
 /* ── DATA TAB ─────────────────────────────────────────────────────────── */
 .table-card { overflow: hidden; }

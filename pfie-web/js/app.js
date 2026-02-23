@@ -918,4 +918,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Load data (async) ──────────────────────────────────────────────────────
   loadData();
+
+  // Re-render charts after web fonts finish loading so Plotly measures
+  // legend/title text with the actual font (Source Sans 3) not the fallback.
+  document.fonts.ready.then(() => {
+    if (filteredData.length) {
+      updateBarChart();
+      updateTrendsChart();
+    }
+  });
 });
