@@ -442,7 +442,7 @@ function updateBarChart() {
     font:          { family: FONT_FAMILY, size: 12 },
     xaxis:         { title: '', tickangle: -30, tickfont: { size: 11 } },
     yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 11 } },
-    legend:        { orientation: 'h', x: 0, y: 1.12, font: { size: 11 } },
+    legend:        { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.12, font: { size: 11 } },
     showlegend:    true,
   };
 
@@ -520,7 +520,7 @@ function updateTrendsChart() {
     font:          { family: FONT_FAMILY, size: 13 },
     xaxis:         { type: 'date', tickformat: '%b %Y', tickmode: 'auto', nticks: 30, title: '', showgrid: false, tickangle: -35, tickfont: { size: 12 } },
     yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 12 } },
-    legend:        { orientation: 'h', x: 0, y: 1.12, font: { size: 11 } },
+    legend:        { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.12, font: { size: 11 } },
     hovermode:     'x unified',
   };
 
