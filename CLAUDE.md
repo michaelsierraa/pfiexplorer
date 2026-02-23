@@ -4,27 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-23 14:28 CST
+**Session:** 2026-02-23 14:33 CST
 
-**In progress:** All 4 queued tasks completed this session via autonomous subagents with Playwright tests. Backlog items remain.
+**In progress:** All queued tasks complete. No active work items — awaiting new direction.
 
 **Resolved this session:**
 - Task #7 — Mobile sidebar close button (`css/style.css` `@media (max-width: 900px)` block): added `.sidebar-toggle.sidebar-open { position: fixed; top: 9px; right: 12px; z-index: 1003; }` and `.tab-nav-divider { display: none; }` — commit `b8cf9ef`
 - Task #2 — Y-axis parity (`js/app.js` `updateBarChart()` layout): `margin.l: 44→55`, `yaxis.tickfont size: 11→12` — commit `b332a7d`
-- Task #3 — LOESS legend toggle (`js/app.js` `makeTraces()` inside `updateTrendsChart()`): added `legendgroup: name` to both scatter and LOESS traces; clicking a legend item now hides/shows both — commit `fd84f6b`
-- Task #4 — Large-screen fonts (`css/style.css` end of file): added `@media (min-width: 1400px)` block scaling body (14→16px), tabs (14→16px), selects (13→15px), labels (11→13px), date inputs (12→14px), download button (13→15px) — commit `4e47221`
-- Playwright infrastructure: `playwright.config.mjs` created (ESM/CJS fix); 3 new test files in `pfie-web/tests/`
+- Task #3 — LOESS legend toggle (`js/app.js` `makeTraces()` inside `updateTrendsChart()`): added `legendgroup: name` to both scatter and LOESS traces — commit `fd84f6b`
+- Task #4 — Large-screen fonts (`css/style.css` end of file): added `@media (min-width: 1400px)` block — commit `4e47221`
+- Playwright infrastructure: `playwright.config.mjs` created (ESM/CJS fix); 4 test files in `pfie-web/tests/`, all passing
 
 **Suspected areas to investigate (start here next session):**
-- `pfie-web/tests/` — all 4 new test files passed; consider expanding mobile sidebar test to assert toggle button computed position (fixed, top: 9px) via `getComputedStyle`
-- `js/app.js` `makeTraces()` (~line 479) — LOESS `legendgroupTitle` could be added for cleaner legend grouping if desired
-- Backlog: `js/app.js` `drawMapPoints()` — Option D jitter (point-in-polygon rejection sampling against us-atlas polygons)
-- Backlog: `js/app.js` `computeJitterAmount()` — sub-pixel jitter at national zoom; minimum screen-pixel displacement fix
+- `pfie-web/tests/task7-mobile-sidebar.spec.js` — could expand to assert toggle button `position: fixed` via `getComputedStyle` for stronger coverage
+- `js/app.js` `makeTraces()` (~line 479) — LOESS `legendgroupTitle` could be added for cleaner grouped legend label if desired
 
 **Next steps:**
-1. **Jitter Option D**: Load `states-10m.json` at startup; add `pointInPolygon()` check in `drawMapPoints()` before placing jittered marker
-2. **Jitter sub-pixel**: In `computeJitterAmount()`, use `map.getZoom()` + `map.latLngToContainerPoint()` to enforce a minimum screen-pixel displacement
-3. **Manual QA**: Open app at 375px and verify sidebar toggle stays pinned when open; open at 1440px and verify font scaling is visible
+1. **Manual QA**: Open app at 375px and verify sidebar toggle stays pinned when open; open at 1440px and verify font scaling is visible
+2. Await new feature requests
 
 ---
 
@@ -33,11 +30,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Geocoding enrichment — RESOLVED
 Audit confirmed all 1,437 production incidents have address-level geocoding from GVA. No centroid placeholders exist. Raw file `raw2014_20GVA.csv` contains city + address fields for all incidents and is available at repo root for reference.
 
-### Jitter — Option D (point-in-polygon bounds)
-Implement rejection sampling against us-atlas state polygons to prevent jitter from crossing state lines or landing in water. Load `states-10m.json` at startup alongside existing CSVs; add `pointInPolygon()` check in `drawMapPoints()` before placing jittered marker.
-
-### Jitter — sub-pixel scale at national zoom
-`computeJitterAmount()` returns 0.0153° max (1.7 km) at national zoom — sub-pixel and invisible for single-point incidents. Consider scaling jitter to enforce a minimum screen-pixel displacement using `map.getZoom()` and `map.latLngToContainerPoint()`.
+### Jitter — RESOLVED (not a to-do)
+Jitter backlog items (Option D point-in-polygon, sub-pixel scale) were reviewed and decided against. No jitter changes planned.
 
 ---
 
