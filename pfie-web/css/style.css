@@ -640,8 +640,8 @@ table.dataTable tbody td a:hover { color: var(--accent); text-decoration: underl
 @media (max-width: 560px) {
   .tab-btn { padding: 0 14px; font-size: 13px; }
   .toolbar-slider { min-width: 120px; }
-  .map-btn-row { flex-direction: column; }
-  .map-btn { width: 100%; justify-content: center; }
+  .map-btn-row { flex-direction: row; flex-wrap: wrap; }
+  .map-btn { flex: 0 0 calc(50% - 4px); justify-content: center; }
   .map-cell { padding: 10px 12px; }
 }
 
