@@ -627,8 +627,8 @@ table.dataTable tbody td a:hover { color: var(--accent); text-decoration: underl
     overflow-y: auto;
   }
   .map-cell--map { min-height: 280px; }
-  .trend-cell    { min-height: 250px; }
-  .bar-cell      { min-height: 250px; }
+  .trend-cell    { min-height: 375px; }
+  .bar-cell      { min-height: 375px; }
 
   .sidebar-toggle.sidebar-open { position: fixed; top: 9px; right: 12px; z-index: 1003; }
   .tab-nav-divider { display: none; }
