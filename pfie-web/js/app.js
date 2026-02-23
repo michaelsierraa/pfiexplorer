@@ -8,7 +8,7 @@
 // ── CONSTANTS ────────────────────────────────────────────────────────────────
 const FATAL_COLOR    = '#c0392b';
 const NONFATAL_COLOR = '#2980b9';
-const FONT_FAMILY    = 'Roboto, sans-serif';
+const FONT_FAMILY    = 'Source Sans 3, sans-serif';
 const DATE_MIN       = '2014-01-01';
 const DATE_MAX       = '2020-12-31';
 
@@ -408,7 +408,7 @@ function updateBarChart() {
   }[f.status];
   const stateLbl  = f.state === 'National' ? 'United States' : f.state;
   const agencyLbl = f.agency === 'All' ? 'All Agencies' : f.agency;
-  const titleText = `${barMetric}<br><span style="font-size:12px;color:#5a6a7a">${stateLbl} · ${agencyLbl} · ${fmtMonthLabel(f.start)} – ${fmtMonthLabel(f.end)}</span>`;
+  const titleText = `<b>${barMetric}</b><br><span style="font-size:12px;color:#5a6a7a">${stateLbl} · ${agencyLbl} · ${fmtMonthLabel(f.start)} – ${fmtMonthLabel(f.end)}</span>`;
 
   // Traces
   const traces = [];
@@ -459,7 +459,7 @@ function updateTrendsChart() {
     Fatal:    'Monthly Fatal Police Firearm Injuries',
     Nonfatal: 'Monthly Nonfatal Police Firearm Injuries',
   }[f.status];
-  const titleText = `${trendsMetric}<br><span style="font-size:12px;color:#5a6a7a">${stateLbl} · ${agencyLbl} · ${fmtMonthLabel(f.start)} – ${fmtMonthLabel(f.end)}</span>`;
+  const titleText = `<b>${trendsMetric}</b><br><span style="font-size:12px;color:#5a6a7a">${stateLbl} · ${agencyLbl} · ${fmtMonthLabel(f.start)} – ${fmtMonthLabel(f.end)}</span>`;
 
   // Aggregate by month + statuslabel
   const monthMap = {};
