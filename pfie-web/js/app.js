@@ -521,7 +521,7 @@ function updateTrendsChart() {
     margin:        { t: 120, r: 24, b: 70, l: 55 },
     font:          { family: FONT_FAMILY, size: 13 },
     xaxis:         window.innerWidth <= 900
-                     ? { type: 'date', tickmode: 'linear', dtick: 'M12', tick0: '2014-01-01', tickformat: '%Y', title: '', showgrid: false, tickangle: 0, tickfont: { size: 12 } }
+                     ? { type: 'date', tickmode: 'linear', dtick: 'M12', tick0: '2014-01-01', tickformat: '%Y', title: '', showgrid: false, tickangle: -35, tickfont: { size: 12 } }
                      : { type: 'date', tickformat: '%b %Y', tickmode: 'auto', nticks: 30, title: '', showgrid: false, tickangle: -35, tickfont: { size: 12 } },
     yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 12 } },
     legend:        { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.0, yanchor: 'bottom', font: { size: 11 } },
