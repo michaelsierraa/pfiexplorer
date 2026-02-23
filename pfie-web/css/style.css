@@ -642,3 +642,22 @@ table.dataTable tbody td a:hover { color: var(--accent); text-decoration: underl
   .map-btn { width: 100%; justify-content: center; }
   .map-cell { padding: 10px 12px; }
 }
+
+/* ── LARGE SCREENS (1400px+) — scale up UI controls ~15–20% ──────────── */
+@media (min-width: 1400px) {
+  html, body { font-size: 16px; }
+
+  .header-title { font-size: 19px; }
+
+  .sidebar-toggle { font: 500 15px/1 var(--font); }
+  .tab-nav .sidebar-toggle { font-size: 15px; }
+
+  .tab-btn { font: 400 16px var(--font); }
+
+  .filter-label { font: 500 13px/1 var(--font); }
+  .filter-select { font: 400 15px var(--font); }
+
+  .date-input { font: 400 14px var(--font); }
+
+  .download-btn { font: 500 15px var(--font); }
+}
