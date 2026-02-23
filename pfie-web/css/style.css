@@ -424,10 +424,12 @@ a:hover { color: var(--accent); text-decoration: underline; }
   min-height: 0;
   max-width: 100%;
 }
-/* Allow Plotly SVG to overflow its boundary — SVG root elements have overflow:hidden by default */
-#barChart svg,
-#trendsMain svg {
-  overflow: visible !important;
+/* Fix Plotly legend clip: scrollbox clip-path is sized at initial font measurement.
+   When Source Sans 3 loads, legend text renders wider and gets clipped by the scrollbox.
+   Removing the clip-path allows legend items to render at their true width. */
+#barChart g.scrollbox,
+#trendsMain g.scrollbox {
+  clip-path: none !important;
 }
 /* ── DATA TAB ─────────────────────────────────────────────────────────── */
 .table-card { overflow: hidden; }
