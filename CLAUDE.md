@@ -4,28 +4,44 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-23 07:30 CST
+**Session:** 2026-02-23 09:04 CST
 
-**In progress:** Task #6 (legend clip) — CSS fix applied but UNTESTED. Task #7 (mobile toggle) not started.
+**In progress:** Task #6 (legend clip) — exhausted all blind-fix attempts. Needs DevTools investigation. Task #7 (mobile toggle) not started.
 
-**Critical finding — do not repeat past mistakes:**
-- Legend clipping occurs **regardless of legend position** (left/center/right all clip). Do NOT try to fix this by moving the legend.
-- Increasing `margin.l` on bar chart from 44→55 makes clipping worse. Keep bar chart at `margin.l: 44`.
-- Current code state: both charts have `legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.12 }` (user wants centered)
+## !! DO NOT REPEAT — everything below was already tried and FAILED for Task #6 !!
 
-**CSS fix applied this session (untested — test first thing):**
-- `css/style.css` lines ~366–390: removed `overflow: hidden` from `.map-grid` and `.map-cell` base class; added `overflow: hidden` explicitly to `.map-cell--map` only (Leaflet tiles need it; chart cells do not)
-- If this fixes clipping: done with Task #6
-- If clipping STILL persists after this CSS fix: the clip is inside Plotly's own SVG (internal `<clipPath>`). Next step would be CSS `.plot-area .legend { clip-path: none; }` or inspecting Chrome DevTools to find which clipPath element is being applied to the legend `<g>` group.
+- Moving legend position (x: 0 left, x: 0.5 center, x: 1 right) — clip is INDEPENDENT of position
+- Changing `margin.l` from 44→55 on bar chart — made clipping worse, reverted to 44
+- Removing `overflow: hidden` from `.map-cell`, `.map-grid` — no effect
+- Adding `#barChart svg { overflow: visible !important }` — no effect
+- CSS scrollbox translateX transform — wrong approach, no effect
+- `document.fonts.ready` re-render — already in code at `app.js` line ~924, no effect
+
+**Current code state (clean baseline for next session):**
+- `app.js` line ~445: bar chart `legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.12 }` (user wants centered)
+- `app.js` line ~523: trends chart same legend config
+- `app.js` line ~441: bar chart `margin: { t:92, r:24, b:60, l:44 }`, `tickfont: { size: 11 }`
+- `css/style.css` line ~378: `.map-cell` base class has NO `overflow: hidden` (removed this session)
+- `css/style.css` line ~388: `.map-cell--map` HAS `overflow: hidden` (correct — Leaflet needs it)
+- `css/style.css` line ~428: `#barChart svg, #trendsMain svg { overflow: visible !important }` (harmless, keep)
+- `css/style.css` line ~375: `.map-grid` has NO `overflow: hidden` (removed this session)
+
+**THE ONLY PRODUCTIVE NEXT STEP:**
+Use Chrome DevTools to inspect the clipped legend element:
+1. Open Chrome → right-click the clipped "Nonfatal" text → Inspect
+2. In the Elements panel, look at the `<g class="legend">` and its ancestors inside the Plotly SVG
+3. Check the Styles panel for any `clip-path` property
+4. Check the element's attributes for `clip-path="url(#...)"` attribute
+5. Find the referenced `<clipPath>` element and check its rect dimensions
+6. Report back: what element has the clip-path, and what are the clipPath rect dimensions vs the chart dimensions?
 
 **Suspected areas to investigate (start here next session):**
-- `css/style.css` lines ~366–390 — test whether removing overflow:hidden from chart cells fixes clipping in Chrome
-- `css/style.css` `@media (max-width: 900px)` line ~594 — Task #7: sidebar toggle hidden on mobile; fix: `.tab-nav .sidebar-toggle { position: fixed; top: 9px; right: 12px; z-index: 1003; }` and `.tab-nav-divider { display: none; }`
+- Chrome DevTools — inspect Plotly SVG legend element for clip-path (see above)
+- `css/style.css` `@media (max-width: 900px)` line ~594 — Task #7: sidebar toggle hidden on mobile
 
 **Next steps:**
-1. Load http://localhost:8080 in Chrome — confirm whether CSS fix resolved legend clipping
-2. If still clipping: open Chrome DevTools, inspect the legend `<g>` element inside the Plotly SVG, check for any `clip-path` attribute being applied to it
-3. **Task #7 (mobile toggle):** CSS-only fix in `style.css` `@media (max-width: 900px)` block — no HTML changes needed
+1. **Task #6:** Use DevTools to find the actual clipPath as described above — then fix it with `clip-path: none` on the right selector, or adjust the clipPath rect
+2. **Task #7 (mobile toggle):** In `style.css` `@media (max-width: 900px)` block: add `.tab-nav .sidebar-toggle { position: fixed; top: 9px; right: 12px; z-index: 1003; }` and `.tab-nav-divider { display: none; }` — CSS-only, no HTML changes
 
 ---
 

@@ -372,21 +372,20 @@ a:hover { color: var(--accent); text-decoration: underline; }
     "map trend"
     "map bar";
   min-height: 0;
-  overflow: hidden;
 }
 
 .map-cell {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   padding: 10px 12px;
   background: var(--bg);
 }
 
-/* Map cell: no padding so the map tiles fill to edges */
+/* Map cell: no padding so the map tiles fill to edges; overflow hidden to contain Leaflet tiles */
 .map-cell--map {
   grid-area: map;
   padding: 0;
+  overflow: hidden;
 }
 .trend-cell { grid-area: trend; }
 .bar-cell   { grid-area: bar; }
@@ -424,6 +423,11 @@ a:hover { color: var(--accent); text-decoration: underline; }
   flex: 1;
   min-height: 0;
   max-width: 100%;
+}
+/* Allow Plotly SVG to overflow its boundary — SVG root elements have overflow:hidden by default */
+#barChart svg,
+#trendsMain svg {
+  overflow: visible !important;
 }
 /* ── DATA TAB ─────────────────────────────────────────────────────────── */
 .table-card { overflow: hidden; }
