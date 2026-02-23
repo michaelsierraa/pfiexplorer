@@ -524,12 +524,7 @@ function updateTrendsChart() {
     hovermode:     'x unified',
   };
 
-  Plotly.react('trendsChart', traces, layout, { displayModeBar: false, responsive: true });
-
-  // Also render into the embedded map-tab instance
-  if (document.getElementById('trendsMain')) {
-    Plotly.react('trendsMain', traces, layout, { displayModeBar: false, responsive: true });
-  }
+  Plotly.react('trendsMain', traces, layout, { displayModeBar: false, responsive: true });
 }
 
 // ── DATA TABLE ────────────────────────────────────────────────────────────────
@@ -692,8 +687,15 @@ function toggleSidebar() {
     backdrop.classList.toggle('active', !isCollapsed);
   }
 
-  // Let Leaflet re-measure its container after the CSS transition
-  setTimeout(() => { if (map) map.invalidateSize(); }, 280);
+  // After the CSS transition completes (0.25 s), re-measure all charts
+  // so Plotly fills the newly available width and Leaflet redraws tiles.
+  setTimeout(() => {
+    if (map) map.invalidateSize();
+    const barEl   = document.getElementById('barChart');
+    const trendEl = document.getElementById('trendsMain');
+    if (barEl)   Plotly.Plots.resize(barEl);
+    if (trendEl) Plotly.Plots.resize(trendEl);
+  }, 300);
 }
 
 // ── MAIN UPDATE CYCLE ─────────────────────────────────────────────────────────
@@ -759,7 +761,6 @@ async function loadData() {
     // while their containers were hidden (display:none gives Plotly zero width)
     setTimeout(() => {
       Plotly.Plots.resize(document.getElementById('barChart'));
-      Plotly.Plots.resize(document.getElementById('trendsChart'));
       Plotly.Plots.resize(document.getElementById('trendsMain'));
     }, 150);
 
@@ -872,12 +873,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById(panelId).classList.add('active');
 
       // After panel is visible, resize Plotly to fill the now-measured container
-      if (this.dataset.tab === 'trends') {
-        setTimeout(() => {
-          Plotly.Plots.resize(document.getElementById('trendsChart'));
-          updateTrendsChart();
-        }, 30);
-      }
       if (this.dataset.tab === 'map') {
         setTimeout(() => {
           Plotly.Plots.resize(document.getElementById('barChart'));
@@ -903,7 +898,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let resizeTimer = null;
   window.addEventListener('resize', () => {
     Plotly.Plots.resize(document.getElementById('barChart'));
-    Plotly.Plots.resize(document.getElementById('trendsChart'));
     Plotly.Plots.resize(document.getElementById('trendsMain'));
 
     // When crossing from mobile → desktop, clear the backdrop so it
