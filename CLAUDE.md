@@ -4,18 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-22 23:51 CST
+**Session:** 2026-02-23 06:16 CST
 
-**In progress:** Two open bugs (Tasks #6, #7) parked for next session.
+**In progress:** Task #6 (Chrome legend clip) RESOLVED. Task #7 (mobile sidebar toggle) is next.
 
 **Suspected areas to investigate (start here next session):**
-- `app.js` line ~923 — `document.fonts.ready` re-render did NOT fix Chrome legend clip; root cause still unknown. Chrome clips "Nonfatal" legend label; Safari does not. Playwright headless cannot reproduce (no Google Fonts loaded).
-- `css/style.css` `.map-cell` line 378 — `overflow: hidden` is the clip source; `max-width:100%` on `.plot-area` (line 423) did not help
-- `css/style.css` `@media (max-width: 900px)` line 594 — sidebar toggle hidden behind sidebar overlay on mobile; CSS fix planned: `position:fixed; top:9px; right:12px; z-index:1003` on `.tab-nav .sidebar-toggle`
+- `css/style.css` `@media (max-width: 900px)` line ~594 — sidebar toggle hidden behind sidebar overlay on mobile; CSS fix planned: `.tab-nav .sidebar-toggle { position: fixed; top: 9px; right: 12px; z-index: 1003; }` and `.tab-nav-divider { display: none; }`
 
 **Next steps:**
 1. **Task #7 (mobile toggle):** In `style.css` `@media (max-width: 900px)` block: add `.tab-nav .sidebar-toggle { position: fixed; top: 9px; right: 12px; z-index: 1003; }` and `.tab-nav-divider { display: none; }` — CSS-only, no HTML changes
-2. **Task #6 (Chrome legend clip):** Try Playwright with WebKit to confirm Chrome-only. Force `Plotly.react()` re-call after `document.fonts.ready` (not just resize). Or increase `margin.r` to 50+ on both charts as a blunt buffer fix.
+
+---
+
 ## Backlog
 
 ### Geocoding enrichment — RESOLVED
