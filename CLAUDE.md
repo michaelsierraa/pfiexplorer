@@ -4,25 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-23 15:40 CST
+**Session:** 2026-02-23 16:15 CST
 
-**In progress:** All work complete. Awaiting new direction.
+**In progress:** Working directory renamed from `pfie_claude_project` to `pfiexplorer` to match GitHub repo name. Shell session broken mid-session due to rename — must start fresh next session from `/Users/ms39643/Documents/GitHub/pfiexplorer`.
 
 **Resolved this session:**
-- Mobile plot heights: `css/style.css` line 630–631 (`@media (max-width: 900px)`): `.trend-cell` and `.bar-cell` `min-height: 250px → 375px` — commit `b851f1e`
-- Mobile trends x-axis ticks: `js/app.js` line 523–525 (`updateTrendsChart()` layout): on `window.innerWidth <= 900`, switched to `tickmode: 'linear'`, `dtick: 'M12'`, `tickformat: '%Y'` for one label/year; desktop unchanged — commit `b851f1e`
-- Mobile x-axis label rotation: `js/app.js` line 524: `tickangle: 0 → -35` on mobile — commit `0b8b861`
-- Toolbar scrolls away on mobile: `css/style.css` (`@media (max-width: 900px)`): moved scroll container from `.map-grid` to `#tab-map` (`overflow-y: auto`); `.map-grid` now `flex: none` — commit `faa8ff4`
-- Mobile buttons 2×2 grid: `css/style.css` (`@media (max-width: 560px)`): `.map-btn-row` changed from `flex-direction: column` to `flex-direction: row; flex-wrap: wrap`; `.map-btn` from `width: 100%` to `flex: 0 0 calc(50% - 4px)` — commit `f7925c8`
+- Mobile plot heights: `css/style.css` line 630–631 (`@media (max-width: 900px)`): `.trend-cell` and `.bar-cell` `min-height: 250px → 375px`
+- Mobile trends x-axis: `js/app.js` line 523–525: yearly ticks (`dtick: 'M12'`, `tickformat: '%Y'`), `-35°` rotation on mobile
+- Toolbar scrolls away on mobile: `css/style.css` (`@media (max-width: 900px)`): scroll container moved from `.map-grid` to `#tab-map`; `.map-grid` now `flex: none`
+- Mobile buttons 2×2 grid: `css/style.css` (`@media (max-width: 560px)`): `flex: 0 0 calc(50% - 4px)` per button
+- GitHub deployment: repo created at `github.com/michaelsierraa/pfiexplorer`; Actions workflow at `.github/workflows/deploy.yml` serves `pfie-web/` — auto-deploys on every push to `main`
+- Live URL: **https://michaelsierraa.github.io/pfiexplorer/**
 
 **Suspected areas to investigate (start here next session):**
-- `js/app.js` line 523–525 — mobile x-axis tick `tick0: '2014-01-01'` is hardcoded; if date range filter changes the visible range, ticks may not align to filtered data start year; consider deriving `tick0` from `filteredData` min date
-- `css/style.css` line 629 — `.map-cell--map { min-height: 280px; }` on mobile; map may feel short relative to the now-taller charts; could increase to 320–360px if desired
-- `pfie-web/tests/` — no Playwright coverage yet for the new mobile scroll behavior or 2×2 button layout
+- `js/app.js` line 524 — `tick0: '2014-01-01'` is hardcoded; derive from `filteredData` min date if tick alignment feels off after filtering
+- `css/style.css` line 629 — `.map-cell--map { min-height: 280px; }` on mobile; may feel short relative to 375px charts
 
 **Next steps:**
-1. **Manual QA**: Load at 375px, scroll down past toolbar, verify toolbar disappears and plots fill screen; verify 2×2 button layout; verify yearly x-axis ticks on trends chart
-2. **tick0 fix** (if needed): derive from `Math.min(...filteredData.map(r => r._date))` and format as `'YYYY-01-01'` instead of hardcoding `'2014-01-01'`
+1. Verify app loads correctly at `https://michaelsierraa.github.io/pfiexplorer/`
+2. Add `pfiexplorer` repo to GitHub Desktop (File → Add Local Repository → `/Users/ms39643/Documents/GitHub/pfiexplorer`)
+3. Standard push workflow: Claude Code edits + commits → push via `git push` or GitHub Desktop "Push origin"
 
 ---
 
