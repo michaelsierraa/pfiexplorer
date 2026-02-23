@@ -45,10 +45,6 @@
 
   <!-- ── HEADER ─────────────────────────────────────────────────────────── -->
   <header class="app-header">
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle filters">
-      <i class="fa-solid fa-filter"></i>
-      <span class="toggle-label">Filters</span>
-    </button>
     <div class="header-title">
       <span class="title-full">Police Firearm Injury Explorer (PFIE)</span>
       <span class="title-short">PFIE</span>
@@ -125,8 +121,12 @@
 
       <!-- Tab nav -->
       <nav class="tab-nav" role="tablist">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle filters">
+          <i class="fa-solid fa-filter"></i>
+          <span class="toggle-label">Filters</span>
+        </button>
+        <div class="tab-nav-divider" aria-hidden="true"></div>
         <button class="tab-btn active" data-tab="map" role="tab" aria-selected="true">Map</button>
-        <button class="tab-btn" data-tab="trends" role="tab" aria-selected="false">Trends</button>
         <button class="tab-btn" data-tab="data" role="tab" aria-selected="false">Data</button>
         <button class="tab-btn" data-tab="about" role="tab" aria-selected="false">About PFIE</button>
       </nav>
@@ -179,29 +179,17 @@
 
           <!-- TOP-RIGHT: trend chart -->
           <div class="map-cell trend-cell">
-            <div class="chart-title" id="trendsMainTitle"></div>
             <div id="trendsMain" class="plot-area"></div>
           </div>
 
           <!-- BOTTOM-RIGHT: bar chart -->
           <div class="map-cell bar-cell">
-            <div class="chart-title" id="barChartTitle"></div>
             <div id="barChart" class="plot-area"></div>
           </div>
 
         </div>
 
       </div><!-- end map tab -->
-
-      <!-- ── TRENDS TAB ───────────────────────────────────────────────── -->
-      <div class="tab-panel" id="tab-trends" role="tabpanel">
-        <div class="tab-inner">
-          <div class="card">
-            <div class="chart-title" id="trendsTitle"></div>
-            <div id="trendsChart" class="plot-area-tall"></div>
-          </div>
-        </div>
-      </div>
 
       <!-- ── DATA TAB ─────────────────────────────────────────────────── -->
       <div class="tab-panel" id="tab-data" role="tabpanel">
