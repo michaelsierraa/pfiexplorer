@@ -4,24 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-23 09:17 CST
+**Session:** 2026-02-23 10:15 CST
 
-**In progress:** Task #6 RESOLVED. Task #7 (mobile sidebar toggle) is next.
+**In progress:** Task #7 (mobile sidebar close) — plan presented, awaiting user decision on implementation approach.
 
-**Task #6 resolution — for future reference:**
-Plotly sizes `g.scrollbox clip-path` based on legend text measured with the initial/fallback font. When Source Sans 3 loads after render, "Nonfatal" is wider than measured and gets clipped by this fixed internal clip-path. Fix: `css/style.css` — `#barChart g.scrollbox, #trendsMain g.scrollbox { clip-path: none !important; }`. Safe because legend has only 2 items and never needs to scroll.
+**Task #7 plan summary:**
+On mobile (≤900px), when the sidebar is open (fixed overlay, z-index 1002), the Filters button in `.tab-nav` is hidden beneath the backdrop (z-index 1001) and unreachable. Two options presented:
+- **Option A (recommended, CSS-only):** When `.sidebar-open` class is on the button, add `position: fixed; top: 9px; right: 12px; z-index: 1003` so it floats above the backdrop. Also hide `.tab-nav-divider`. Zero HTML/JS changes.
+- **Option B (standard drawer UX):** Add `<button class="sidebar-close-btn" id="sidebarClose">` inside `.sidebar-inner`, hidden on desktop. Requires HTML + CSS + JS changes.
 
-**Current code state:**
-- `app.js` line ~445/523: both charts `legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.12 }` (centered)
-- `css/style.css` line ~378: `.map-cell` base class has NO `overflow: hidden`
-- `css/style.css` line ~388: `.map-cell--map` HAS `overflow: hidden` (Leaflet needs it)
-- `css/style.css` line ~375: `.map-grid` has NO `overflow: hidden`
+**Other changes this session:**
+- Renamed "Map" tab label to "Plots" (`pfie-web/index.html` line 129) — committed `1a1676b`
+- Updated `update-status` skill (`~/.claude/commands/update-status.md`) to auto-run `/compact` as step 6
 
 **Suspected areas to investigate (start here next session):**
-- `css/style.css` `@media (max-width: 900px)` line ~594 — Task #7: sidebar toggle hidden on mobile
+- `css/style.css` line ~600 (`@media (max-width: 900px)` block) — where Task #7 Option A CSS change goes
+- `pfie-web/index.html` line ~62 (`.sidebar-inner`) — where Task #7 Option B HTML change goes
+- `pfie-web/js/app.js` line ~891 (event listeners block) — where Task #7 Option B JS change goes
 
 **Next steps:**
-1. **Task #7 (mobile toggle):** In `style.css` `@media (max-width: 900px)` block: add `.tab-nav .sidebar-toggle { position: fixed; top: 9px; right: 12px; z-index: 1003; }` and `.tab-nav-divider { display: none; }` — CSS-only, no HTML changes
+1. User decides Option A vs Option B for Task #7
+2. Implement chosen option (Option A: 3 lines in `style.css`; Option B: HTML + CSS + JS across 3 files)
+3. Test on Chrome mobile emulator at 375px, 768px widths
 
 ---
 
