@@ -434,11 +434,11 @@ function updateBarChart() {
   }
 
   const layout = {
-    title:         { text: titleText, x: 0.02, xanchor: 'left', font: { family: FONT_FAMILY, size: 14, color: '#1a202c' }, pad: { t: 6 } },
+    title:         { text: titleText, x: 0.02, xanchor: 'left', yref: 'container', y: 0.92, yanchor: 'top', font: { family: FONT_FAMILY, size: 14, color: '#1a202c' }, pad: { t: 0 } },
     barmode:       'group',
     paper_bgcolor: '#ffffff',
     plot_bgcolor:  '#ffffff',
-    margin:        { t: 100, r: 10, b: 60, l: 44 },
+    margin:        { t: 92, r: 10, b: 60, l: 44 },
     font:          { family: FONT_FAMILY, size: 12 },
     xaxis:         { title: '', tickangle: -30, tickfont: { size: 11 } },
     yaxis:         { title: 'Count', gridcolor: '#edf0f3', tickfont: { size: 11 } },
@@ -513,10 +513,10 @@ function updateTrendsChart() {
   ];
 
   const layout = {
-    title:         { text: titleText, x: 0.02, xanchor: 'left', font: { family: FONT_FAMILY, size: 14, color: '#1a202c' }, pad: { t: 6 } },
+    title:         { text: titleText, x: 0.02, xanchor: 'left', yref: 'container', y: 0.92, yanchor: 'top', font: { family: FONT_FAMILY, size: 14, color: '#1a202c' }, pad: { t: 0 } },
     paper_bgcolor: '#ffffff',
     plot_bgcolor:  '#ffffff',
-    margin:        { t: 100, r: 20, b: 70, l: 55 },
+    margin:        { t: 92, r: 20, b: 70, l: 55 },
     font:          { family: FONT_FAMILY, size: 13 },
     xaxis:         { type: 'date', tickformat: '%b %Y', tickmode: 'auto', nticks: 30, title: '', showgrid: false, tickangle: -35, tickfont: { size: 12 } },
     yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 12 } },
