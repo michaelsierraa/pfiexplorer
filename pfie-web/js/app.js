@@ -408,7 +408,9 @@ function updateBarChart() {
   }[f.status];
   const stateLbl  = f.state === 'National' ? 'United States' : f.state;
   const agencyLbl = f.agency === 'All' ? 'All Agencies' : f.agency;
-  const titleText = `<b>${barMetric}</b><br><span style="font-size:12px;color:#5a6a7a">${stateLbl} · ${agencyLbl} · ${fmtMonthLabel(f.start)} – ${fmtMonthLabel(f.end)}</span>`;
+  document.getElementById('bar-title').innerHTML =
+    `<div class="plot-title-main">${barMetric}</div>` +
+    `<div class="plot-title-sub">${stateLbl} · ${agencyLbl} · ${fmtMonthLabel(f.start)} – ${fmtMonthLabel(f.end)}</div>`;
 
   // Traces
   const traces = [];
@@ -434,11 +436,10 @@ function updateBarChart() {
   }
 
   const layout = {
-    title:         { text: titleText, x: 0.02, xanchor: 'left', yref: 'container', y: 0.92, yanchor: 'top', font: { family: FONT_FAMILY, size: 14, color: '#1a202c' }, pad: { t: 0 } },
     barmode:       'group',
     paper_bgcolor: '#ffffff',
     plot_bgcolor:  '#ffffff',
-    margin:        { t: 120, r: 24, b: 60, l: 55 },
+    margin:        { t: 16, r: 24, b: 60, l: 55 },
     font:          { family: FONT_FAMILY, size: 12 },
     xaxis:         { title: '', tickangle: -30, tickfont: { size: 11 } },
     yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 12 } },
@@ -459,7 +460,9 @@ function updateTrendsChart() {
     Fatal:    'Monthly Fatal Police Firearm Injuries',
     Nonfatal: 'Monthly Nonfatal Police Firearm Injuries',
   }[f.status];
-  const titleText = `<b>${trendsMetric}</b><br><span style="font-size:12px;color:#5a6a7a">${stateLbl} · ${agencyLbl} · ${fmtMonthLabel(f.start)} – ${fmtMonthLabel(f.end)}</span>`;
+  document.getElementById('trend-title').innerHTML =
+    `<div class="plot-title-main">${trendsMetric}</div>` +
+    `<div class="plot-title-sub">${stateLbl} · ${agencyLbl} · ${fmtMonthLabel(f.start)} – ${fmtMonthLabel(f.end)}</div>`;
 
   // Aggregate by month + statuslabel
   const monthMap = {};
@@ -515,10 +518,9 @@ function updateTrendsChart() {
   ];
 
   const layout = {
-    title:         { text: titleText, x: 0.02, xanchor: 'left', yref: 'container', y: 0.92, yanchor: 'top', font: { family: FONT_FAMILY, size: 14, color: '#1a202c' }, pad: { t: 0 } },
     paper_bgcolor: '#ffffff',
     plot_bgcolor:  '#ffffff',
-    margin:        { t: 120, r: 24, b: 70, l: 55 },
+    margin:        { t: 16, r: 24, b: 70, l: 55 },
     font:          { family: FONT_FAMILY, size: 13 },
     xaxis:         window.innerWidth <= 900
                      ? { type: 'date', tickmode: 'linear', dtick: 'M12', tick0: '2014-01-01', tickformat: '%Y', title: '', showgrid: false, tickangle: -35, tickfont: { size: 12 } }
