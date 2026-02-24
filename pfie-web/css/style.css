@@ -396,13 +396,13 @@ a:hover { color: var(--accent); text-decoration: underline; }
 }
 .plot-title-main {
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: #1a202c;
 }
 .plot-title-sub {
   font-family: var(--font);
-  font-size: 12px;
+  font-size: 13px;
   color: #5a6a7a;
   margin-top: 2px;
 }
@@ -477,6 +477,15 @@ table.dataTable tbody td a { color: var(--primary); font-size: 12px; }
 table.dataTable tbody td a:hover { color: var(--accent); text-decoration: underline; }
 
 .dataTables_wrapper { font-family: var(--font); color: var(--text); }
+.dataTables_wrapper .dt-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+.dataTables_wrapper .dataTables_filter { float: none; text-align: left; }
+.dataTables_wrapper .dataTables_length { float: none; }
 .dataTables_wrapper .dataTables_filter input,
 .dataTables_wrapper .dataTables_length select {
   border: 1px solid var(--border);
