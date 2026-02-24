@@ -98,15 +98,3 @@ CSV files (data/)
 | PapaParse | 5.4.1 | CSV parsing |
 | jQuery | 3.7.0 | Required by DataTables |
 | Flatpickr (dark theme) | latest | Date range pickers |
-
-### Local Development
-
-The app uses `fetch()` to load CSV data, so it requires a local web server — it will not work via `file://`.
-
-```bash
-cd pfie-web
-python3 -m http.server 8080
-# Open http://localhost:8080
-```
-
-There is no build step, bundler, or package manager. All dependencies are loaded from CDN.
