@@ -4,23 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-23 19:52 CST
+**Session:** 2026-02-23 19:56 CST
 
-**In progress:** All changes committed; pushing to GitHub pending.
+**In progress:** Session complete. All changes committed and pushed to `michaelsierraa/pfiexplorer` main. GitHub Actions deploy triggered.
 
 **Resolved this session:**
-- Mobile viewport clipping: `css/style.css` line 63 — added `height: 100svh` after `height: 100vh` so app never hides behind mobile browser nav bar
-- Plot titles now wrap: moved titles out of Plotly into HTML `<div class="plot-title">` elements above each chart; `index.html` lines 182–183 and 187–188; `app.js` `updateBarChart()` ~line 411 and `updateTrendsChart()` ~line 462 set `innerHTML`; CSS classes `.plot-title`, `.plot-title-main`, `.plot-title-sub` added at `style.css` ~line 391; Plotly `margin.t` reduced from 120→16 in both layouts
-- Bar chart `margin.b` left at 60 (uniform across screen sizes — confirmed acceptable on mobile)
-- Citation URL in About tab updated to `https://michaelsierraa.github.io/pfiexplorer/` (`index.html` line 254)
+- Mobile viewport clipping: `css/style.css` line 63 — `height: 100svh` added after `height: 100vh`
+- Plot titles moved to HTML divs for natural wrapping: `index.html` lines 182, 187; `app.js` `updateBarChart()` ~line 411, `updateTrendsChart()` ~line 462; CSS `.plot-title*` at `style.css` ~line 391; Plotly `margin.t` 120→16 in both chart layouts
+- Bar chart `margin.b` kept at 60 (acceptable on mobile)
+- Citation URL updated to `https://michaelsierraa.github.io/pfiexplorer/` in `index.html` ~line 254
+- Backlog items added: custom domain (`pfiexplorer.com`), logo design + integration
 
 **Suspected areas to investigate (start here next session):**
-- `js/app.js` line 524 — `tick0: '2014-01-01'` is hardcoded; derive from `filteredData` min date if tick alignment feels off after filtering
-- `css/style.css` ~line 648 — `.map-cell--map { min-height: 280px; }` on mobile; may feel short relative to 375px charts
+- `js/app.js` line 524 — `tick0: '2014-01-01'` hardcoded; derive from `filteredData` min date if tick alignment is off after filtering
+- `css/style.css` ~line 648 — `.map-cell--map { min-height: 280px }` on mobile; may feel short relative to 375px charts
 
 **Next steps:**
-1. Push to GitHub: `git push` from `/Users/ms39643/Documents/GitHub/pfiexplorer`
-2. Verify live app at `https://michaelsierraa.github.io/pfiexplorer/` after Actions deploy completes
+1. Verify live app at `https://michaelsierraa.github.io/pfiexplorer/` after Actions deploy completes
+2. Custom domain: add `CNAME` file to `pfie-web/` with `pfiexplorer.com`, configure DNS, set in GitHub Pages settings (see Backlog)
+3. Logo: create logo files in `pfie-web/img/`, wire into `.header-title` in `index.html` and add favicon `<link>` tags in `<head>` (see Backlog)
 
 ---
 
@@ -31,6 +33,20 @@ Audit confirmed all 1,437 production incidents have address-level geocoding from
 
 ### Jitter — RESOLVED (not a to-do)
 Jitter backlog items (Option D point-in-polygon, sub-pixel scale) were reviewed and decided against. No jitter changes planned.
+
+### Custom domain — TODO
+Point `pfiexplorer.com` (owned) to the GitHub Pages site. Steps:
+1. Add `CNAME` file to `pfie-web/` containing `pfiexplorer.com` (single line, no `https://`)
+2. At DNS registrar: add CNAME record `www` → `michaelsierraa.github.io`, and ALIAS/ANAME record for apex (`@`) → `michaelsierraa.github.io` (or use GitHub's four A records for the apex)
+3. In GitHub repo Settings → Pages → Custom domain: enter `pfiexplorer.com`, save
+4. Wait for DNS propagation, then enable "Enforce HTTPS"
+5. After custom domain is live, update citation URL in `pfie-web/index.html` line 254
+
+### Logo — TODO
+Create a logo and integrate it in two places:
+1. **App header** — replace or supplement the text title in `pfie-web/index.html` `.header-title` (line 48–52) with an `<img>` tag pointing to a logo file (e.g., `pfie-web/img/logo.svg`)
+2. **Browser/tab icon (favicon)** — replace the default globe with the logo; add `<link rel="icon">` tags in `<head>` of `index.html` pointing to appropriately sized PNG/SVG files in `pfie-web/img/`
+- Logo file(s) to be created and placed in a new `pfie-web/img/` directory
 
 ---
 
