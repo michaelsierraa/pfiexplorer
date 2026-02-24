@@ -440,10 +440,10 @@ function updateBarChart() {
     paper_bgcolor: '#ffffff',
     plot_bgcolor:  '#ffffff',
     margin:        { t: 16, r: 24, b: 60, l: 55 },
-    font:          { family: FONT_FAMILY, size: 12 },
+    font:          { family: FONT_FAMILY, size: 13 },
     xaxis:         { title: '', tickangle: -30, tickfont: { size: 11 } },
     yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 12 } },
-    legend:        { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.0, yanchor: 'bottom', font: { size: 11 } },
+    legend:        { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.0, yanchor: 'bottom', font: { size: 13 } },
     showlegend:    true,
   };
 
@@ -526,7 +526,7 @@ function updateTrendsChart() {
                      ? { type: 'date', tickmode: 'linear', dtick: 'M12', tick0: '2014-01-01', tickformat: '%Y', title: '', showgrid: false, tickangle: -35, tickfont: { size: 12 } }
                      : { type: 'date', tickformat: '%b %Y', tickmode: 'auto', nticks: 30, title: '', showgrid: false, tickangle: -35, tickfont: { size: 12 } },
     yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 12 } },
-    legend:        { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.0, yanchor: 'bottom', font: { size: 11 } },
+    legend:        { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.0, yanchor: 'bottom', font: { size: 13 } },
     hovermode:     'x unified',
   };
 
@@ -589,6 +589,7 @@ function updateDataTable() {
     scrollX:     true,
     autoWidth:   false,
     fixedHeader: true,
+    dom:         "<'dt-top'lf>rtip",
   });
   dtInitialized = true;
 }
