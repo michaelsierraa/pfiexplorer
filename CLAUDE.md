@@ -4,26 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-23 16:15 CST
+**Session:** 2026-02-23 19:52 CST
 
-**In progress:** Working directory renamed from `pfie_claude_project` to `pfiexplorer` to match GitHub repo name. Shell session broken mid-session due to rename — must start fresh next session from `/Users/ms39643/Documents/GitHub/pfiexplorer`.
+**In progress:** All changes committed; pushing to GitHub pending.
 
 **Resolved this session:**
-- Mobile plot heights: `css/style.css` line 630–631 (`@media (max-width: 900px)`): `.trend-cell` and `.bar-cell` `min-height: 250px → 375px`
-- Mobile trends x-axis: `js/app.js` line 523–525: yearly ticks (`dtick: 'M12'`, `tickformat: '%Y'`), `-35°` rotation on mobile
-- Toolbar scrolls away on mobile: `css/style.css` (`@media (max-width: 900px)`): scroll container moved from `.map-grid` to `#tab-map`; `.map-grid` now `flex: none`
-- Mobile buttons 2×2 grid: `css/style.css` (`@media (max-width: 560px)`): `flex: 0 0 calc(50% - 4px)` per button
-- GitHub deployment: repo created at `github.com/michaelsierraa/pfiexplorer`; Actions workflow at `.github/workflows/deploy.yml` serves `pfie-web/` — auto-deploys on every push to `main`
-- Live URL: **https://michaelsierraa.github.io/pfiexplorer/**
+- Mobile viewport clipping: `css/style.css` line 63 — added `height: 100svh` after `height: 100vh` so app never hides behind mobile browser nav bar
+- Plot titles now wrap: moved titles out of Plotly into HTML `<div class="plot-title">` elements above each chart; `index.html` lines 182–183 and 187–188; `app.js` `updateBarChart()` ~line 411 and `updateTrendsChart()` ~line 462 set `innerHTML`; CSS classes `.plot-title`, `.plot-title-main`, `.plot-title-sub` added at `style.css` ~line 391; Plotly `margin.t` reduced from 120→16 in both layouts
+- Bar chart `margin.b` left at 60 (uniform across screen sizes — confirmed acceptable on mobile)
+- Citation URL in About tab updated to `https://michaelsierraa.github.io/pfiexplorer/` (`index.html` line 254)
 
 **Suspected areas to investigate (start here next session):**
 - `js/app.js` line 524 — `tick0: '2014-01-01'` is hardcoded; derive from `filteredData` min date if tick alignment feels off after filtering
-- `css/style.css` line 629 — `.map-cell--map { min-height: 280px; }` on mobile; may feel short relative to 375px charts
+- `css/style.css` ~line 648 — `.map-cell--map { min-height: 280px; }` on mobile; may feel short relative to 375px charts
 
 **Next steps:**
-1. Verify app loads correctly at `https://michaelsierraa.github.io/pfiexplorer/`
-2. Add `pfiexplorer` repo to GitHub Desktop (File → Add Local Repository → `/Users/ms39643/Documents/GitHub/pfiexplorer`)
-3. Standard push workflow: Claude Code edits + commits → push via `git push` or GitHub Desktop "Push origin"
+1. Push to GitHub: `git push` from `/Users/ms39643/Documents/GitHub/pfiexplorer`
+2. Verify live app at `https://michaelsierraa.github.io/pfiexplorer/` after Actions deploy completes
 
 ---
 
