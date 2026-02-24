@@ -110,14 +110,3 @@ python3 -m http.server 8080
 ```
 
 There is no build step, bundler, or package manager. All dependencies are loaded from CDN.
-
-### GitHub Pages Deployment
-
-1. Push repo to GitHub
-2. **Settings → Pages** → set source to the `pfie-web/` folder
-3. For a custom domain: add a `CNAME` file in `pfie-web/` containing just the domain name (e.g., `pfiexplorer.com`)
-4. Update DNS at your registrar: add a CNAME record pointing to `<username>.github.io`
-5. In **Settings → Pages → Custom domain**, enter the domain and save
-6. Enable "Enforce HTTPS" after DNS propagates
-
-The `.nojekyll` file in `pfie-web/` is required to prevent GitHub Pages from applying Jekyll processing.
