@@ -4,20 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-23 19:56 CST
+**Session:** 2026-02-24 11:10 CST
 
-**In progress:** Session complete. All changes committed and pushed to `michaelsierraa/pfiexplorer` main. GitHub Actions deploy triggered.
+**In progress:** Session complete. All changes committed and pushed to `michaelsierraa/pfiexplorer` main (commits `051ecd1`, `e6f2b76`). GitHub Actions deploy triggered.
 
 **Resolved this session:**
-- Mobile viewport clipping: `css/style.css` line 63 — `height: 100svh` added after `height: 100vh`
-- Plot titles moved to HTML divs for natural wrapping: `index.html` lines 182, 187; `app.js` `updateBarChart()` ~line 411, `updateTrendsChart()` ~line 462; CSS `.plot-title*` at `style.css` ~line 391; Plotly `margin.t` 120→16 in both chart layouts
-- Bar chart `margin.b` kept at 60 (acceptable on mobile)
-- Citation URL updated to `https://michaelsierraa.github.io/pfiexplorer/` in `index.html` ~line 254
-- Backlog items added: custom domain (`pfiexplorer.com`), logo design + integration
+- `README.md` created at repo root — two-section (public overview + technical reference); covers data source, dataset scope, team, citation, architecture, local dev, deployment
+- `pfie-web/index.html` `<head>` (lines 7–20) — added `<meta name="description">`, Open Graph (`og:type`, `og:url`, `og:title`, `og:description`), and Twitter Card tags
+- `DECISIONS.md` removed from git tracking (`git rm --cached`) and added to `.gitignore` line 6 — file stays local only
+- GitHub repo description and topics updated via `gh repo edit` (topics: gun-violence, law-enforcement, data-visualization, javascript, leaflet, plotly, open-data, police)
+- Bar chart `font.size` unified 12 → 13 to match trends chart (`app.js` line 443)
+- Both chart legend `font.size` bumped 11 → 13 (`app.js` lines 446, 529)
+- `.plot-title-main` bumped 14px → 16px; `.plot-title-sub` bumped 12px → 13px (`style.css` lines 399, 405)
+- DataTable search bar moved next to length dropdown: `dom: "<'dt-top'lf>rtip"` added to DataTable init (`app.js` line 592); `.dt-top` flex layout + float overrides added to `style.css` lines 480–485
 
 **Suspected areas to investigate (start here next session):**
 - `js/app.js` line 524 — `tick0: '2014-01-01'` hardcoded; derive from `filteredData` min date if tick alignment is off after filtering
-- `css/style.css` ~line 648 — `.map-cell--map { min-height: 280px }` on mobile; may feel short relative to 375px charts
+- `css/style.css` ~line 648 — `.map-cell--map { min-height: 280px }` on mobile; may feel short relative to chart heights
 
 **Next steps:**
 1. Verify live app at `https://michaelsierraa.github.io/pfiexplorer/` after Actions deploy completes
