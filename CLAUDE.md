@@ -4,28 +4,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-24 11:10 CST
+**Session:** 2026-02-25 11:33 CST
 
-**In progress:** Session complete. All changes committed and pushed to `michaelsierraa/pfiexplorer` main (commits `051ecd1`, `e6f2b76`). GitHub Actions deploy triggered.
+**In progress:** Trends chart x-axis padding is actively being tuned — local server running at `http://localhost:8080`. Changes are uncommitted. User is reviewing padding behavior before committing and pushing.
 
 **Resolved this session:**
-- `README.md` created at repo root — two-section (public overview + technical reference); covers data source, dataset scope, team, citation, architecture, local dev, deployment
-- `pfie-web/index.html` `<head>` (lines 7–20) — added `<meta name="description">`, Open Graph (`og:type`, `og:url`, `og:title`, `og:description`), and Twitter Card tags
-- `DECISIONS.md` removed from git tracking (`git rm --cached`) and added to `.gitignore` line 6 — file stays local only
-- GitHub repo description and topics updated via `gh repo edit` (topics: gun-violence, law-enforcement, data-visualization, javascript, leaflet, plotly, open-data, police)
-- Bar chart `font.size` unified 12 → 13 to match trends chart (`app.js` line 443)
-- Both chart legend `font.size` bumped 11 → 13 (`app.js` lines 446, 529)
-- `.plot-title-main` bumped 14px → 16px; `.plot-title-sub` bumped 12px → 13px (`style.css` lines 399, 405)
-- DataTable search bar moved next to length dropdown: `dom: "<'dt-top'lf>rtip"` added to DataTable init (`app.js` line 592); `.dt-top` flex layout + float overrides added to `style.css` lines 480–485
+- `GVA_Project_Onboarding.Rmd` added to repo — RA/coder onboarding doc; committed locally (`be82226`) but not pushed
+- Heading levels promoted (`##`→`#`, `###`→`##`), manual number prefixes stripped, `pdf_document` output with `number_sections: true` + `xelatex` engine added to YAML
+- `fmtMonthLabel()` (`app.js` line 125) — added `day: 'numeric'` so plot subtitles now show e.g. "Jul 17, 2015 – Dec 31, 2020"
+- Trends chart `updateTrendsChart()` (`app.js` ~lines 482–610) — three fixes:
+  1. X-axis now uses explicit `range` from filter dates + `autorange: false`; unified `tickmode: 'linear'` with adaptive `dtick` computed from estimated chart width (~1 tick per 70px); `tick0: '2014-01-01'` fixed anchor
+  2. LOESS suppressed when `n < 6` monthly data points; adaptive `bw=1.0` for `6≤n<10`, standard `bw=0.75` for `n≥10`; Plotly annotation shown when suppressed
+  3. `plotly_legendclick` handler added (guarded by `trendsListenerAdded` flag) to re-apply explicit range after legend toggles — fixes year-2000 fallback when all traces hidden
+- X-axis padding: changed from fixed ms to `0.4 × dtick interval`, capped at 60 days — still being reviewed by user
 
 **Suspected areas to investigate (start here next session):**
-- `js/app.js` line 524 — `tick0: '2014-01-01'` hardcoded; derive from `filteredData` min date if tick alignment is off after filtering
+- `app.js` legendclick handler (~line 594) — padding logic is duplicated from the main layout block; consider extracting a `getTrendsPadMs(f)` helper to keep DRY
 - `css/style.css` ~line 648 — `.map-cell--map { min-height: 280px }` on mobile; may feel short relative to chart heights
 
 **Next steps:**
-1. Verify live app at `https://michaelsierraa.github.io/pfiexplorer/` after Actions deploy completes
-2. Custom domain: add `CNAME` file to `pfie-web/` with `pfiexplorer.com`, configure DNS, set in GitHub Pages settings (see Backlog)
-3. Logo: create logo files in `pfie-web/img/`, wire into `.header-title` in `index.html` and add favicon `<link>` tags in `<head>` (see Backlog)
+1. Confirm x-axis padding looks good at localhost:8080, then commit all `app.js` changes and push
+2. Push `GVA_Project_Onboarding.Rmd` (commit `be82226` already local)
+3. Custom domain: add `CNAME` file to `pfie-web/` with `pfiexplorer.com`, configure DNS, set in GitHub Pages settings (see Backlog)
+4. Logo: create logo files in `pfie-web/img/`, wire into `.header-title` in `index.html` and add favicon `<link>` tags in `<head>` (see Backlog)
 
 ---
 
