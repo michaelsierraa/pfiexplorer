@@ -28,8 +28,9 @@ let lastFitTime  = 0;
 let lastState    = null;     // tracks previous state filter for reset logic
 
 // Chart / table handles
-let dtInstance   = null;     // DataTables instance
-let dtInitialized = false;
+let dtInstance          = null;     // DataTables instance
+let dtInitialized       = false;
+let trendsListenerAdded = false;    // guard: legendclick range-fix listener added once
 
 // ── SEEDED PRNG (mulberry32) ──────────────────────────────────────────────────
 // Used to produce deterministic jitter (same slider value = same offsets).
@@ -123,7 +124,7 @@ function floorMonth(d) {
 
 // "Jan 2017" label for trend chart x-axis
 function fmtMonthLabel(d) {
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 // ── FILTER HELPERS ─────────────────────────────────────────────────────────────
@@ -478,36 +479,68 @@ function updateTrendsChart() {
   const nonfatal = Object.values(monthMap).filter(v => v.status === 'Nonfatal')
                      .sort((a, b) => a.month - b.month);
 
+  // Adaptive tick density: estimate usable chart width, pick coarsest dtick that fits
+  // Sidebar (260px) is open when viewport > 900px; chart margins: l=55, r=24
+  const sidebarW    = window.innerWidth > 900 ? 260 : 0;
+  const chartW      = window.innerWidth - sidebarW - 79;
+  const rangeMs     = f.end.getTime() - f.start.getTime();
+  const rangeMonths = rangeMs / (1000 * 60 * 60 * 24 * 30.44);
+  const maxTicks    = Math.max(3, Math.floor(chartW / 70));  // ~1 tick per 70px
+  const dtickOpts   = ['M1', 'M3', 'M6', 'M12'];
+  const dtickMos    = [1,    3,    6,    12  ];
+  let dtick = 'M12';
+  for (let i = 0; i < dtickOpts.length; i++) {
+    if (rangeMonths / dtickMos[i] <= maxTicks) { dtick = dtickOpts[i]; break; }
+  }
+  const tickformat = dtick === 'M12' ? '%Y' : '%b %Y';
+
+  // Pad x-axis range by 40% of one tick interval (so the first/last label has
+  // breathing room from the axes), capped at 60 days to avoid excess on annual ticks
+  const dtickMs = dtickMos[dtickOpts.indexOf(dtick)] * 30.44 * 864e5;
+  const padMs   = Math.min(dtickMs * 0.4, 60 * 864e5);
+
   // Build scatter + LOESS traces for one series
+  let loessOmitted = false;
   function makeTraces(pts, color, name) {
     if (!pts.length) return [];
-    // Use ISO date strings so Plotly treats x as a true time axis (chronological order)
-    const dates  = pts.map(p => fmtDate(p.month));   // "2014-01-01"
+    const n      = pts.length;
+    const dates  = pts.map(p => fmtDate(p.month));
     const xs     = pts.map(p => p.month.getTime());
     const ys     = pts.map(p => p.count);
-    const smooth = loess(xs, ys, 0.75);
+
+    const scatter = {
+      x:             dates,
+      y:             ys,
+      mode:          'markers',
+      name,
+      legendgroup:   name,
+      type:          'scatter',
+      marker:        { color, size: 6, opacity: 0.6 },
+      hovertemplate: `<b>${name}</b><br>%{x|%b %Y}: %{y}<extra></extra>`,
+    };
+
+    // Suppress trend line when too few monthly data points
+    if (n < 6) {
+      loessOmitted = true;
+      return [scatter];
+    }
+
+    // Adaptive bandwidth: increase smoothing for small-n series
+    const bw     = n < 10 ? 1.0 : 0.75;
+    const smooth = loess(xs, ys, bw);
 
     return [
+      scatter,
       {
-        x:              dates,
-        y:              ys,
-        mode:           'markers',
-        name,
-        legendgroup:    name,
-        type:           'scatter',
-        marker:         { color, size: 6, opacity: 0.6 },
-        hovertemplate:  `<b>${name}</b><br>%{x|%b %Y}: %{y}<extra></extra>`,
-      },
-      {
-        x:          dates,
-        y:          smooth,
-        mode:       'lines',
-        name:       `${name} trend`,
+        x:           dates,
+        y:           smooth,
+        mode:        'lines',
+        name:        `${name} trend`,
         legendgroup: name,
-        type:       'scatter',
-        line:       { color, width: 2.5, dash: 'dash' },
-        showlegend: false,
-        hoverinfo:  'skip',
+        type:        'scatter',
+        line:        { color, width: 2.5, dash: 'dash' },
+        showlegend:  false,
+        hoverinfo:   'skip',
       },
     ];
   }
@@ -522,15 +555,62 @@ function updateTrendsChart() {
     plot_bgcolor:  '#ffffff',
     margin:        { t: 16, r: 24, b: 70, l: 55 },
     font:          { family: FONT_FAMILY, size: 13 },
-    xaxis:         window.innerWidth <= 900
-                     ? { type: 'date', tickmode: 'linear', dtick: 'M12', tick0: '2014-01-01', tickformat: '%Y', title: '', showgrid: false, tickangle: -35, tickfont: { size: 12 } }
-                     : { type: 'date', tickformat: '%b %Y', tickmode: 'auto', nticks: 30, title: '', showgrid: false, tickangle: -35, tickfont: { size: 12 } },
-    yaxis:         { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 12 } },
-    legend:        { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.0, yanchor: 'bottom', font: { size: 13 } },
-    hovermode:     'x unified',
+    xaxis: {
+      type:       'date',
+      range:      [fmtDate(new Date(f.start.getTime() - padMs)), fmtDate(new Date(f.end.getTime() + padMs))],
+      autorange:  false,
+      tickmode:   'linear',
+      dtick,
+      tick0:      '2014-01-01',
+      tickformat,
+      title:      '',
+      showgrid:   false,
+      tickangle:  -35,
+      tickfont:   { size: 12 },
+    },
+    yaxis:    { title: 'Frequency', gridcolor: '#edf0f3', tickfont: { size: 12 } },
+    legend:   { orientation: 'h', x: 0.5, xanchor: 'center', y: 1.0, yanchor: 'bottom', font: { size: 13 } },
+    hovermode: 'x unified',
   };
 
+  if (loessOmitted) {
+    layout.annotations = [{
+      text:      'Trend line omitted — insufficient data in current filter selection',
+      xref:      'paper',
+      yref:      'paper',
+      x:         0.5,
+      y:         0.97,
+      xanchor:   'center',
+      yanchor:   'top',
+      showarrow: false,
+      font:      { size: 11, color: '#5a6a7a' },
+    }];
+  }
+
   Plotly.react('trendsMain', traces, layout, { displayModeBar: false, responsive: true });
+
+  // Re-apply the explicit x-axis range after legend clicks. When all traces are
+  // hidden Plotly drops autorange:false and falls back to ~year 2000 by default.
+  if (!trendsListenerAdded) {
+    document.getElementById('trendsMain').on('plotly_legendclick', function() {
+      setTimeout(function() {
+        const cf        = getFilters();
+        const cfRangeMs = cf.end.getTime() - cf.start.getTime();
+        const cfMaxTicks = Math.max(3, Math.floor((window.innerWidth - (window.innerWidth > 900 ? 260 : 0) - 79) / 70));
+        const cfDtickOpts = ['M1','M3','M6','M12'], cfDtickMos = [1,3,6,12];
+        let cfDtick = 'M12';
+        for (let i = 0; i < cfDtickOpts.length; i++) {
+          if ((cfRangeMs / (1000*60*60*24*30.44)) / cfDtickMos[i] <= cfMaxTicks) { cfDtick = cfDtickOpts[i]; break; }
+        }
+        const cfPadMs = Math.min(cfDtickMos[cfDtickOpts.indexOf(cfDtick)] * 30.44 * 864e5 * 0.4, 60*864e5);
+        Plotly.relayout('trendsMain', {
+          'xaxis.range':     [fmtDate(new Date(cf.start.getTime() - cfPadMs)), fmtDate(new Date(cf.end.getTime() + cfPadMs))],
+          'xaxis.autorange': false,
+        });
+      }, 0);
+    });
+    trendsListenerAdded = true;
+  }
 }
 
 // ── DATA TABLE ────────────────────────────────────────────────────────────────
