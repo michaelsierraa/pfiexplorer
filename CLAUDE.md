@@ -4,29 +4,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-**Session:** 2026-02-25 11:33 CST
+**Session:** 2026-03-01 12:39 CST
 
-**In progress:** Trends chart x-axis padding is actively being tuned — local server running at `http://localhost:8080`. Changes are uncommitted. User is reviewing padding behavior before committing and pushing.
+**In progress:** Custom domain setup — `pfiexplorer.com` → GitHub Pages (`michaelsierraa.github.io/pfiexplorer`). DNS is partially configured in Cloudflare; remaining steps listed below.
 
 **Resolved this session:**
-- `GVA_Project_Onboarding.Rmd` added to repo — RA/coder onboarding doc; committed locally (`be82226`) but not pushed
-- Heading levels promoted (`##`→`#`, `###`→`##`), manual number prefixes stripped, `pdf_document` output with `number_sections: true` + `xelatex` engine added to YAML
-- `fmtMonthLabel()` (`app.js` line 125) — added `day: 'numeric'` so plot subtitles now show e.g. "Jul 17, 2015 – Dec 31, 2020"
-- Trends chart `updateTrendsChart()` (`app.js` ~lines 482–610) — three fixes:
-  1. X-axis now uses explicit `range` from filter dates + `autorange: false`; unified `tickmode: 'linear'` with adaptive `dtick` computed from estimated chart width (~1 tick per 70px); `tick0: '2014-01-01'` fixed anchor
-  2. LOESS suppressed when `n < 6` monthly data points; adaptive `bw=1.0` for `6≤n<10`, standard `bw=0.75` for `n≥10`; Plotly annotation shown when suppressed
-  3. `plotly_legendclick` handler added (guarded by `trendsListenerAdded` flag) to re-apply explicit range after legend toggles — fixes year-2000 fallback when all traces hidden
-- X-axis padding: changed from fixed ms to `0.4 × dtick interval`, capped at 60 days — still being reviewed by user
+- `pfie-web/CNAME` file created with content `pfiexplorer.com` — not yet committed/pushed
+- Cloudflare DNS: deleted broken backwards CNAME (`michaelsierraa.github.io` → `www.pfiexplorer.com`) and wrong `www` A record (`206.188.192.233`)
+- Cloudflare DNS: added correct CNAME (`www` → `michaelsierraa.github.io`, DNS only)
+- Cloudflare DNS: 4 GitHub A records (`185.199.108–111.153`) are present but still set to **Proxied** — must be switched to DNS only
+- Cloudflare DNS: 4 GitHub AAAA records (`2606:50c0:8000–8003::153`) present but still Proxied — must be switched to DNS only
+- Stale A record `pfiexplorer.com` → `206.188.192.233` (old Network Solutions host) still present — must be deleted
 
 **Suspected areas to investigate (start here next session):**
-- `app.js` legendclick handler (~line 594) — padding logic is duplicated from the main layout block; consider extracting a `getTrendsPadMs(f)` helper to keep DRY
-- `css/style.css` ~line 648 — `.map-cell--map { min-height: 280px }` on mobile; may feel short relative to chart heights
+- Cloudflare DNS panel — confirm all A/AAAA records are DNS only (grey cloud), not Proxied
+- GitHub Pages Settings — after CNAME push, re-enter `pfiexplorer.com` as custom domain and confirm green DNS check
+- `app.js` legendclick handler (~line 594) — padding logic duplicated from main layout block; consider `getTrendsPadMs(f)` helper
 
 **Next steps:**
-1. Confirm x-axis padding looks good at localhost:8080, then commit all `app.js` changes and push
-2. Push `GVA_Project_Onboarding.Rmd` (commit `be82226` already local)
-3. Custom domain: add `CNAME` file to `pfie-web/` with `pfiexplorer.com`, configure DNS, set in GitHub Pages settings (see Backlog)
-4. Logo: create logo files in `pfie-web/img/`, wire into `.header-title` in `index.html` and add favicon `<link>` tags in `<head>` (see Backlog)
+1. In Cloudflare: delete stale A record `pfiexplorer.com` → `206.188.192.233`
+2. In Cloudflare: switch all 4 A records and all 4 AAAA records from Proxied → DNS only (grey cloud)
+3. Commit and push `pfie-web/CNAME`: `git add pfie-web/CNAME && git commit -m "Add CNAME for custom domain pfiexplorer.com" && git push`
+4. In GitHub repo Settings → Pages: enter `pfiexplorer.com` as custom domain, save, wait for green DNS check
+5. Enable "Enforce HTTPS" once DNS check passes
+6. Update citation URL in `pfie-web/index.html` line 254 to `pfiexplorer.com`
 
 ---
 
