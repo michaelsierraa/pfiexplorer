@@ -1,6 +1,6 @@
 # Police Firearm Injury Explorer (PFIE)
 
-**Live app:** [https://michaelsierraa.github.io/pfiexplorer/](https://michaelsierraa.github.io/pfiexplorer/)
+**Live app:** [pfiexplorer.com/](https://pfixexplorer.com/)
 
 An interactive data visualization dashboard for exploring firearm injuries sustained by active-duty law enforcement officers in the United States.
 
@@ -98,3 +98,4 @@ CSV files (data/)
 | PapaParse | 5.4.1 | CSV parsing |
 | jQuery | 3.7.0 | Required by DataTables |
 | Flatpickr (dark theme) | latest | Date range pickers |
+
