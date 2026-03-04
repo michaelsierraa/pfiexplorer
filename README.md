@@ -62,13 +62,12 @@ Aidan Bach, Tommy Flaherty, Ciara Garcia, Kateryna Kaplun, Philip Phu Pham, and 
 
 ```
 pfiexplorer/
-├── pfie/               Original R Shiny app (reference only — do not modify)
-└── pfie-web/           Active static JS port (GitHub Pages deployable)
+└── pfie-web/           Static JS app (GitHub Pages deployable)
     ├── index.html      All HTML structure, CDN imports, UI elements
     ├── css/style.css   All styling
     ├── js/app.js       All application logic (~860 lines, single file)
     └── data/
-        ├── pfie20142020.csv      Main dataset (831 KB, 1,437 incidents)
+        ├── pfie20142020.csv      Main dataset (1,437 incidents)
         ├── statecentroids.csv    Lat/lon fallbacks for missing point locations
         └── statebounds.csv       State boundary boxes for map fitting
 ```
