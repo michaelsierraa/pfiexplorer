@@ -1,6 +1,6 @@
 # Police Firearm Injury Explorer (PFIE)
 
-**Live app:** [pfiexplorer.com/](https://pfixexplorer.com/)
+**Live app:** [pfiexplorer.com](https://pfiexplorer.com)
 
 An interactive data visualization dashboard for exploring firearm injuries sustained by active-duty law enforcement officers in the United States.
 
@@ -52,7 +52,7 @@ Aidan Bach, Tommy Flaherty, Ciara Garcia, Kateryna Kaplun, Philip Phu Pham, and 
 
 ### Preferred Citation
 
-> Sierra-Arévalo, M., Nix, J., Bach, A., Flaherty, T., Garcia, C., Kaplun, K., Pham, P. P., & Villarreal, J. (2024). *The Police Firearm Injury Explorer.* Retrieved from [https://michaelsierraa.github.io/pfiexplorer/](https://michaelsierraa.github.io/pfiexplorer/)
+> Sierra-Arévalo, M., Nix, J., Bach, A., Flaherty, T., Garcia, C., Kaplun, K., Pham, P. P., & Villarreal, J. (2024). *The Police Firearm Injury Explorer.* Retrieved from [https://pfiexplorer.com](https://pfiexplorer.com)
 
 ---
 
