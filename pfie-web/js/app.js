@@ -12,6 +12,11 @@ const FONT_FAMILY    = 'Source Sans 3, sans-serif';
 const DATE_MIN       = '2014-01-01';
 const DATE_MAX       = '2020-12-31';
 
+// Free CARTO basemaps key (https://carto.com/basemaps/apikey). Tiles requested
+// without a key render an "API KEY REQUIRED" watermark. The key is public by
+// necessity: it ships to every browser with the tile URLs.
+const CARTO_API_KEY  = 'cb1_3u2c_1_96f169a56011cf0ce80beaf5';
+
 // ── APPLICATION STATE ────────────────────────────────────────────────────────
 let rawData      = [];       // All parsed rows from CSV
 let stateBounds  = {};       // { StateName: {x1,y1,x2,y2} }
@@ -207,8 +212,9 @@ function initMap() {
 
   // CartoDB Positron tiles (matches Shiny app)
   L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key={key}',
     {
+      key:         CARTO_API_KEY,
       attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       subdomains:  'abcd',
       maxZoom:     19,
