@@ -105,8 +105,12 @@ a:hover { color: var(--accent); text-decoration: underline; }
   color: #fff;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+.header-logo { width: 34px; height: 34px; flex-shrink: 0; }
+.title-full, .title-short { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .title-short { display: none; }
 
 /* ── APP BODY ─────────────────────────────────────────────────────────── */
