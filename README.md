@@ -48,7 +48,7 @@ PFIE is built on data compiled by the [Gun Violence Archive (GVA)](https://www.g
 - [Justin Nix](https://jnix.netlify.app/about) (University of Nebraska–Omaha) — study design, data coding
 
 **Research assistants (coding support):**
-Aidan Bach, Tommy Flaherty, Ciara Garcia, Kateryna Kaplun, Philip Phu Pham, and Jamie Villarreal
+Aidan Bach, Paul Thomas Flaherty, Ciara Garcia, Kateryna Kaplun, Phillip Phu Pham, and Jamie Villarreal
 
 ### Preferred Citation
 
