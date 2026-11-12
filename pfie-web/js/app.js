@@ -353,6 +353,7 @@ function drawMapPoints() {
       `<b>State:</b> ${r.state}<br>` +
       `<b>Date:</b> ${fmtDate(r._date)}<br>` +
       `<b>Incident ID:</b> ${r.incidentid}<br>` +
+      `<b>Officer ID:</b> ${r.officerid}<br>` +
       `<b>Agency:</b> ${r.agencytypelabel}<br>` +
       `<b>Injury Status:</b> ${r.statuslabel}<br>` +
       `<b>Officers Shot:</b> ${r._totalofficers}<br>` +
@@ -632,6 +633,7 @@ function buildTableRows() {
 
     return [
       r.incidentid,
+      r.officerid,
       fmtDate(r._date),
       r.statuslabel,
       r.state,
@@ -658,6 +660,7 @@ function updateDataTable() {
     data:        rows,
     columns: [
       { title: 'Incident ID' },
+      { title: 'Officer ID' },
       { title: 'Date' },
       { title: 'Injury Status' },
       { title: 'State' },
@@ -668,10 +671,10 @@ function updateDataTable() {
     ],
     columnDefs: [
       // Render Sources column as raw HTML
-      { targets: 7, render: { display: val => val } },
+      { targets: 8, render: { display: val => val } },
     ],
     pageLength:  25,
-    order:       [[1, 'desc']],
+    order:       [[2, 'desc']],
     scrollX:     true,
     autoWidth:   false,
     fixedHeader: true,
@@ -683,10 +686,11 @@ function updateDataTable() {
 // ── DOWNLOAD HANDLER ──────────────────────────────────────────────────────────
 function downloadData() {
   const f    = getFilters();
-  const cols = ['Incident ID','Date','Injury Status','State','Latitude','Longitude','Agency Type','Sources'];
+  const cols = ['Incident ID','Officer ID','Date','Injury Status','State','Latitude','Longitude','Agency Type','Sources'];
 
   const rows = filteredData.map(r => ({
     'Incident ID':   r.incidentid,
+    'Officer ID':    r.officerid,
     'Date':          fmtDate(r._date),
     'Injury Status': r.statuslabel,
     'State':         r.state,
