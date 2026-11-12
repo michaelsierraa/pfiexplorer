@@ -18,7 +18,7 @@ Encoding: UTF-8 CSV with a header row. 9 columns, 1,779 rows, 1,437 unique `inci
 
 Each row is one injured officer. An incident with more than one officer shot has more than one row. 342 rows repeat an earlier `incidentid`. 223 rows match another row on every column except `officerid`, because the officers share the same incident details. 60 incident IDs have both a Fatal and a Nonfatal row.
 
-Rows are not sorted by `officerid`. Sort by it to see the officers in date order.
+Rows are sorted by `officerid`, which is date order.
 
 An `officerid` is permanent once assigned. New records in later versions get the next unused numbers and never renumber earlier officers. Rows that match on every other column are interchangeable, so the number carries no meaning beyond identifying the row.
 
