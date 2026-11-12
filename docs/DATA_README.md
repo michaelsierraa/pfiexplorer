@@ -32,7 +32,7 @@ The `sources` column holds URLs to news and agency pages. The pages may change o
 
 ## Citation
 
-Sierra-Arévalo, Michael, Justin Nix, Aidan Bach, Paul Thomas Flaherty, Ciara Garcia, Kateryna Kaplun, Phillip Phu Pham, and Jamie Villarreal. 2026. *Police Firearm Injury Explorer (PFIE)*, Version 1 [Data set]. Harvard Dataverse. DOI: [to be added at publication]
+Sierra-Arévalo, Michael, Justin Nix, Aidan Bach, Paul Thomas Flaherty, Ciara Garcia, Kateryna Kaplun, Phillip Phu Pham, and Jamie Villarreal. 2026. *Police Firearm Injury Explorer (PFIE)*, Version 1 [Data set]. Harvard Dataverse. https://doi.org/10.7910/DVN/MEJB4Y
 
 The data are released under CC BY 4.0. Anyone who uses them must credit the authors and cite this dataset.
 
