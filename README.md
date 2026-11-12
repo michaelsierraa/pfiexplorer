@@ -52,7 +52,7 @@ Aidan Bach, Tommy Flaherty, Ciara Garcia, Kateryna Kaplun, Philip Phu Pham, and 
 
 ### Preferred Citation
 
-> Sierra-Arévalo, M., Nix, J., Bach, A., Flaherty, T., Garcia, C., Kaplun, K., Pham, P. P., & Villarreal, J. (2026, March 4). Police Firearm Injury Explorer (PFIE). [https://doi.org/10.17605/OSF.IO/6X2RP](https://doi.org/10.17605/OSF.IO/6X2RP)
+> Sierra-Arévalo, Michael, Justin Nix, Aidan Bach, Paul Thomas Flaherty, Ciara Garcia, Kateryna Kaplun, Phillip Phu Pham, and Jamie Villarreal. 2026. *Police Firearm Injury Explorer (PFIE)*, Version 1 [Data set]. Harvard Dataverse. [https://doi.org/10.7910/DVN/FBJQDJ](https://doi.org/10.7910/DVN/FBJQDJ)
 ---
 
 ## Technical Reference
